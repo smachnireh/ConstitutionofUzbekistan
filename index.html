@@ -1,2186 +1,578 @@
-index.html
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
-    <head>
-        <meta charset="UTF-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
-        />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <title>Конституция Узбекистана</title>
-        <link rel="icon" type="image/png" href="favicon.png" />
-        <style>
-            :root {
-                --accent: #0052b4;
-                --accent-light: #e8f0fc;
-                --accent-mid: #3b82f6;
-                --text: #1a1a1a;
-                --text-secondary: #6b7280;
-                --bg: #ffffff;
-                --bg-secondary: #f7f8fa;
-                --border: #e5e7eb;
-                --nav-height: 64px;
-                --highlight: rgba(0, 82, 180, 0.12);
-                --shadow:
-                    0 1px 3px rgba(0, 0, 0, 0.08),
-                    0 4px 16px rgba(0, 0, 0, 0.06);
-                --shadow-nav:
-                    0 -1px 0 rgba(0, 0, 0, 0.06),
-                    0 -4px 20px rgba(0, 0, 0, 0.06);
-            }
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Конституция Узбекистана — Поиск</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f0e8;
+    --card: #fffdf8;
+    --accent: #1a4a2e;
+    --gold: #c8963e;
+    --text: #1c1c1c;
+    --muted: #6b6b5e;
+    --border: #e0d9cc;
+    --highlight: #fff3cd;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    font-family: 'IBM Plex Sans', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+  }
+  header {
+    background: var(--accent);
+    color: white;
+    padding: 32px 24px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: -60px;
+    width: 200px; height: 200px;
+    border: 2px solid rgba(200,150,62,0.3);
+    border-radius: 50%;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; right: -40px;
+    width: 140px; height: 140px;
+    border: 2px solid rgba(200,150,62,0.2);
+    border-radius: 50%;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    position: relative;
+  }
+  header p {
+    margin-top: 6px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.65);
+    font-weight: 300;
+    position: relative;
+  }
+  .gold-line {
+    width: 60px; height: 2px;
+    background: var(--gold);
+    margin: 14px auto 0;
+    position: relative;
+  }
 
-            * {
-                box-sizing: border-box;
-                margin: 0;
-                padding: 0;
-                -webkit-tap-highlight-color: transparent;
-            }
+  .search-wrap {
+    max-width: 720px;
+    margin: 28px auto 0;
+    padding: 0 16px;
+  }
+  .search-box {
+    display: flex;
+    align-items: center;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 0 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .search-box:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 2px 20px rgba(26,74,46,0.12);
+  }
+  .search-box svg {
+    flex-shrink: 0;
+    color: var(--muted);
+  }
+  .search-box input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 14px 12px;
+    font-size: 15px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    color: var(--text);
+  }
+  .search-box input::placeholder { color: var(--muted); }
+  .clear-btn {
+    background: none; border: none; cursor: pointer;
+    color: var(--muted); font-size: 18px; padding: 4px;
+    display: none;
+    transition: color 0.15s;
+  }
+  .clear-btn:hover { color: var(--text); }
 
-            body {
-                font-family:
-                    "SF Pro Display",
-                    system-ui,
-                    -apple-system,
-                    sans-serif;
-                background: var(--bg);
-                color: var(--text);
-                height: 100dvh;
-                overflow: hidden;
-                display: flex;
-                flex-direction: column;
-            }
+  .filters {
+    display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap;
+  }
+  .filter-btn {
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.15s;
+    font-weight: 500;
+  }
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-            /* === HEADER === */
-            .app-header {
-                background: rgba(255, 255, 255, 0.92);
-                backdrop-filter: blur(20px);
-                -webkit-backdrop-filter: blur(20px);
-                border-bottom: 1px solid var(--border);
-                padding: 16px 20px 12px;
-                flex-shrink: 0;
-                z-index: 10;
-            }
-            .app-header h1 {
-                font-size: 13px;
-                font-weight: 600;
-                color: var(--accent);
-                letter-spacing: 0.08em;
-                text-transform: uppercase;
-                margin-bottom: 2px;
-            }
-            .app-header p {
-                font-size: 11px;
-                color: var(--text-secondary);
-            }
+  .stats {
+    max-width: 720px;
+    margin: 16px auto 0;
+    padding: 0 16px;
+    font-size: 12px;
+    color: var(--muted);
+  }
 
-            /* === MAIN SCROLL AREA === */
-            .main-content {
-                flex: 1;
-                overflow-y: auto;
-                overflow-x: hidden;
-                -webkit-overflow-scrolling: touch;
-                padding-bottom: calc(var(--nav-height) + 8px);
-            }
+  .results {
+    max-width: 720px;
+    margin: 16px auto 32px;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
 
-            /* === TABS === */
-            .tab-pane {
-                display: none;
-            }
-            .tab-pane.active {
-                display: block;
-            }
+  .chapter-header {
+    background: var(--accent);
+    color: white;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-top: 8px;
+  }
+  .chapter-header .ch-num {
+    font-size: 11px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .chapter-header .ch-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    margin-top: 3px;
+  }
 
-            /* === SEARCH TAB === */
-            .search-bar-wrap {
-                position: sticky;
-                top: 0;
-                z-index: 5;
-                background: rgba(255, 255, 255, 0.95);
-                backdrop-filter: blur(16px);
-                -webkit-backdrop-filter: blur(16px);
-                padding: 12px 16px;
-                border-bottom: 1px solid var(--border);
-            }
-            .search-bar {
-                display: flex;
-                align-items: center;
-                background: var(--bg-secondary);
-                border: 1.5px solid var(--border);
-                border-radius: 12px;
-                padding: 0 14px;
-                gap: 8px;
-                transition:
-                    border-color 0.2s,
-                    box-shadow 0.2s;
-            }
-            .search-bar:focus-within {
-                border-color: var(--accent);
-                box-shadow: 0 0 0 3px rgba(0, 82, 180, 0.1);
-            }
-            .search-bar svg {
-                flex-shrink: 0;
-                color: var(--text-secondary);
-            }
-            .search-bar input {
-                border: none;
-                background: transparent;
-                outline: none;
-                font-size: 16px;
-                color: var(--text);
-                padding: 11px 0;
-                width: 100%;
-                font-family: inherit;
-            }
-            .search-bar input::placeholder {
-                color: #9ca3af;
-            }
-            #clearBtn {
-                background: #d1d5db;
-                border: none;
-                border-radius: 50%;
-                width: 18px;
-                height: 18px;
-                color: white;
-                font-size: 11px;
-                cursor: pointer;
-                display: none;
-                align-items: center;
-                justify-content: center;
-                flex-shrink: 0;
-                padding: 0;
-                line-height: 1;
-            }
-            #clearBtn.visible {
-                display: flex;
-            }
+  .article-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .article-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 3px 14px rgba(26,74,46,0.1);
+    transform: translateY(-1px);
+  }
+  .article-card.expanded {
+    border-color: var(--gold);
+  }
+  .article-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .art-num {
+    background: var(--accent);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 1px;
+    letter-spacing: 0.3px;
+  }
+  .art-summary {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.5;
+    flex: 1;
+    font-weight: 500;
+  }
+  .art-toggle {
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: auto;
+    flex-shrink: 0;
+    margin-top: 2px;
+    transition: transform 0.2s;
+  }
+  .article-card.expanded .art-toggle { transform: rotate(180deg); }
+  .art-full {
+    display: none;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: #3a3a3a;
+    line-height: 1.75;
+  }
+  .article-card.expanded .art-full { display: block; }
 
-            .results-info {
-                padding: 10px 16px 4px;
-                font-size: 12px;
-                color: var(--text-secondary);
-            }
+  mark {
+    background: var(--highlight);
+    color: var(--text);
+    border-radius: 2px;
+    padding: 0 2px;
+  }
 
-            /* === ARTICLE CARD === */
-            .article-card {
-                margin: 8px 16px;
-                border: 1px solid var(--border);
-                border-radius: 14px;
-                background: var(--bg);
-                overflow: hidden;
-                transition:
-                    box-shadow 0.2s,
-                    transform 0.1s;
-                cursor: pointer;
-            }
-            .article-card:active {
-                transform: scale(0.99);
-            }
-            .article-card:hover {
-                box-shadow: var(--shadow);
-            }
+  .no-results {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+  .no-results .icon { font-size: 40px; margin-bottom: 12px; }
+  .no-results p { font-size: 15px; }
 
-            .article-card-header {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 12px 16px 8px;
-            }
-            .article-number {
-                font-size: 13px;
-                font-weight: 700;
-                color: var(--accent);
-                letter-spacing: 0.02em;
-            }
-            .article-meta {
-                font-size: 11px;
-                color: var(--text-secondary);
-                text-align: right;
-                max-width: 60%;
-                line-height: 1.3;
-            }
-            .article-text-preview {
-                font-family: Georgia, "Times New Roman", serif;
-                font-size: 14.5px;
-                line-height: 1.65;
-                color: var(--text);
-                padding: 0 16px 14px;
-                display: -webkit-box;
-                -webkit-line-clamp: 4;
-                -webkit-box-orient: vertical;
-                overflow: hidden;
-            }
-            .article-card.expanded .article-text-preview {
-                display: block;
-                -webkit-line-clamp: unset;
-            }
+  @media (max-width: 480px) {
+    header h1 { font-size: 22px; }
+    .art-summary { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
 
-            .fav-btn {
-                background: none;
-                border: none;
-                cursor: pointer;
-                padding: 4px;
-                color: #d1d5db;
-                transition:
-                    color 0.2s,
-                    transform 0.15s;
-                font-size: 18px;
-                line-height: 1;
-            }
-            .fav-btn.active {
-                color: #ef4444;
-            }
-            .fav-btn:active {
-                transform: scale(1.3);
-            }
+<header>
+  <h1>Конституция Республики Узбекистан</h1>
+  <p>Умный поиск по статьям и главам</p>
+  <div class="gold-line"></div>
+</header>
 
-            mark {
-                background: var(--highlight);
-                color: var(--accent);
-                font-weight: 600;
-                border-radius: 3px;
-                padding: 0 1px;
-            }
+<div class="search-wrap">
+  <div class="search-box">
+    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input type="text" id="searchInput" placeholder="Поиск по слову, номеру статьи или главы…" autocomplete="off">
+    <button class="clear-btn" id="clearBtn" title="Очистить">✕</button>
+  </div>
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all">Всё</button>
+    <button class="filter-btn" data-filter="chapter">Только главы</button>
+    <button class="filter-btn" data-filter="article">Только статьи</button>
+    <button class="filter-btn" data-filter="rights">Права и свободы</button>
+    <button class="filter-btn" data-filter="economy">Экономика</button>
+    <button class="filter-btn" data-filter="duties">Обязанности</button>
+  </div>
+</div>
 
-            /* === EMPTY STATE === */
-            .empty-state {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                padding: 64px 24px;
-                text-align: center;
-                gap: 12px;
-            }
-            .empty-state .icon {
-                font-size: 56px;
-                opacity: 0.3;
-            }
-            .empty-state h3 {
-                font-size: 17px;
-                font-weight: 600;
-                color: var(--text);
-            }
-            .empty-state p {
-                font-size: 14px;
-                color: var(--text-secondary);
-                max-width: 240px;
-                line-height: 1.5;
-            }
+<div class="stats" id="stats"></div>
+<div class="results" id="results"></div>
 
-            /* === CONTENTS TAB === */
-            .toc-section-title {
-                font-size: 11px;
-                font-weight: 700;
-                letter-spacing: 0.1em;
-                text-transform: uppercase;
-                color: var(--accent);
-                padding: 20px 16px 6px;
-                background: var(--bg);
-                position: sticky;
-                top: 0;
-                z-index: 2;
-                border-bottom: 1px solid var(--border);
-            }
-            .toc-chapter-item {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 13px 16px;
-                border-bottom: 1px solid var(--border);
-                cursor: pointer;
-                transition: background 0.15s;
-                background: var(--bg);
-            }
-            .toc-chapter-item:active {
-                background: var(--bg-secondary);
-            }
-            .toc-chapter-info {
-            }
-            .toc-chapter-name {
-                font-size: 15px;
-                font-weight: 500;
-                color: var(--text);
-                line-height: 1.3;
-            }
-            .toc-chapter-count {
-                font-size: 12px;
-                color: var(--text-secondary);
-                margin-top: 2px;
-            }
-            .toc-chevron {
-                color: var(--text-secondary);
-                font-size: 12px;
-            }
+<script>
+const data = [
+  { type:'chapter', num:'I', title:'Государственный суровенитет', section:'Основы государственности' },
+  { type:'article', num:1, chapter:'I', summary:'Узбекистан — суверенное, демократическое, правовое, социальное и светское государство.', full:'Узбекистан — суверенное, демократическое, правовое, социальное и светское государство с республиканской формой правления. Названия «Республика Узбекистан» и «Узбекистан» равнозначны.', tags:['основы','государство'] },
+  { type:'article', num:2, chapter:'I', summary:'Государство служит интересам народа; органы власти ответственны перед обществом.', full:'Государство выражает волю народа, служит его интересам. Государственные органы и должностные лица ответственны перед обществом и гражданами.', tags:['государство','ответственность'] },
+  { type:'article', num:3, chapter:'I', summary:'Узбекистан самостоятельно определяет своё устройство и политику; границы неприкосновенны.', full:'Республика Узбекистан определяет национально-государственное и административно-территориальное устройство, систему органов государственной власти, проводит свою внутреннюю и внешнюю политику. Государственная граница и территория Узбекистана неприкосновенны и неделимы.', tags:['территория','суверенитет'] },
+  { type:'article', num:4, chapter:'I', summary:'Государственный язык — узбекский. Языки всех народов страны уважаются.', full:'Государственным языком Республики Узбекистан является узбекский язык. Республика обеспечивает уважительное отношение к языкам, обычаям и традициям всех народностей страны.', tags:['язык','культура'] },
+  { type:'article', num:5, chapter:'I', summary:'Узбекистан имеет флаг, герб и гимн, охраняемые государством.', full:'Республика Узбекистан имеет свои государственные символы — флаг, герб, гимн, утверждаемые законом. Государственные символы находятся под защитой государства.', tags:['символы'] },
+  { type:'article', num:6, chapter:'I', summary:'Столица Республики Узбекистан — Ташкент.', full:'Столица Республики Узбекистан — город Ташкент.', tags:['столица'] },
 
-            .chapter-view-header {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                padding: 14px 16px;
-                border-bottom: 1px solid var(--border);
-                background: rgba(255, 255, 255, 0.95);
-                backdrop-filter: blur(16px);
-                position: sticky;
-                top: 0;
-                z-index: 5;
-            }
-            .back-btn {
-                background: var(--bg-secondary);
-                border: 1px solid var(--border);
-                border-radius: 8px;
-                padding: 7px 12px;
-                font-size: 13px;
-                font-weight: 500;
-                color: var(--accent);
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                gap: 4px;
-                white-space: nowrap;
-                flex-shrink: 0;
-            }
-            .chapter-view-title {
-                font-size: 14px;
-                font-weight: 600;
-                color: var(--text);
-                line-height: 1.3;
-            }
+  { type:'chapter', num:'II', title:'Народовластие', section:'Основы государственности' },
+  { type:'article', num:7, chapter:'II', summary:'Народ — единственный источник власти; узурпация власти противоконституционна.', full:'Народ является единственным источником государственной власти. Присвоение полномочий государственной власти является антиконституционным и влечёт ответственность по закону.', tags:['власть','народ'] },
+  { type:'article', num:8, chapter:'II', summary:'Народ Узбекистана — все граждане страны независимо от национальности.', full:'Народ Узбекистана составляют граждане Республики Узбекистан независимо от их национальности.', tags:['народ','гражданство'] },
+  { type:'article', num:9, chapter:'II', summary:'Важнейшие вопросы выносятся на референдум.', full:'Наиболее важные вопросы общественной и государственной жизни выносятся на обсуждение народа — референдум. Порядок проведения референдума определяется законом.', tags:['референдум','демократия'] },
+  { type:'article', num:10, chapter:'II', summary:'От имени народа вправе выступать только Олий Мажлис и Президент.', full:'От имени народа Узбекистана могут выступать только избранные им Олий Мажлис и Президент. Никакая партия или лицо не могут выступать от имени народа.', tags:['власть','парламент','президент'] },
+  { type:'article', num:11, chapter:'II', summary:'Власть разделена на законодательную, исполнительную и судебную.', full:'Система государственной власти Республики Узбекистан основывается на принципе разделения властей на законодательную, исполнительную и судебную.', tags:['разделение властей'] },
+  { type:'article', num:12, chapter:'II', summary:'Общественная жизнь — на основе многообразия идеологий; государственная идеология запрещена.', full:'В Республике Узбекистан общественная жизнь развивается на основе многообразия политических институтов, идеологий и мнений. Никакая идеология не может устанавливаться в качестве государственной.', tags:['идеология','плюрализм'] },
+  { type:'article', num:13, chapter:'II', summary:'Высшая ценность демократии — человек, его жизнь, свобода и достоинство.', full:'Демократия в Республике Узбекистан базируется на принципах, согласно которым высшей ценностью является человек, его жизнь, свобода, честь, достоинство и другие неотъемлемые права.', tags:['демократия','права','достоинство'] },
+  { type:'article', num:14, chapter:'II', summary:'Государство действует на принципах законности и социальной справедливости.', full:'Государство осуществляет свою деятельность на принципах законности, социальной справедливости и солидарности в целях обеспечения благосостояния человека и устойчивого развития общества.', tags:['законность','справедливость'] },
 
-            /* === FAV TAB === */
-            .fav-empty {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                padding: 80px 24px;
-                text-align: center;
-                gap: 10px;
-            }
+  { type:'chapter', num:'III', title:'Верховенство Конституции и закона', section:'Основы государственности' },
+  { type:'article', num:15, chapter:'III', summary:'Конституция имеет высшую юридическую силу; международные договоры — часть правовой системы.', full:'В Республике Узбекистан признаётся безусловное верховенство Конституции и законов. Конституция имеет высшую юридическую силу и прямое действие. Международные договоры являются составной частью правовой системы.', tags:['конституция','законность','международное право'] },
+  { type:'article', num:16, chapter:'III', summary:'Никакой закон не может противоречить Конституции.', full:'Ни одно из положений Конституции не может толковаться в ущерб правам и интересам Республики. Ни один закон или нормативный акт не может противоречить принципам Конституции.', tags:['конституция','закон'] },
 
-            /* === BOTTOM NAV === */
-            .bottom-nav {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                height: var(--nav-height);
-                background: rgba(255, 255, 255, 0.95);
-                backdrop-filter: blur(20px);
-                -webkit-backdrop-filter: blur(20px);
-                box-shadow: var(--shadow-nav);
-                display: flex;
-                z-index: 100;
-                padding-bottom: env(safe-area-inset-bottom);
-            }
-            .nav-btn {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                gap: 3px;
-                background: none;
-                border: none;
-                cursor: pointer;
-                padding: 8px 4px;
-                transition: opacity 0.2s;
-                -webkit-tap-highlight-color: transparent;
-            }
-            .nav-btn .nav-icon {
-                font-size: 22px;
-                line-height: 1;
-                transition: transform 0.2s;
-            }
-            .nav-btn.active .nav-icon {
-                transform: scale(1.1);
-            }
-            .nav-btn span.nav-label {
-                font-size: 10px;
-                font-weight: 500;
-                letter-spacing: 0.02em;
-                color: var(--text-secondary);
-                transition: color 0.2s;
-            }
-            .nav-btn.active span.nav-label {
-                color: var(--accent);
-                font-weight: 700;
-            }
+  { type:'chapter', num:'IV', title:'Внешняя политика', section:'Основы государственности' },
+  { type:'article', num:17, chapter:'IV', summary:'Узбекистан — полноправный субъект международных отношений; принципы — суверенное равенство и мир.', full:'Республика Узбекистан является полноправным субъектом международных отношений. Внешняя политика основывается на принципах суверенного равенства, неприменения силы, невмешательства во внутренние дела других государств.', tags:['внешняя политика','международные отношения'] },
+  { type:'article', num:18, chapter:'IV', summary:'Узбекистан проводит миролюбивую внешнюю политику и может вступать в союзы и содружества.', full:'Республика Узбекистан осуществляет миролюбивую внешнюю политику, развивает двусторонние и многосторонние отношения. Может заключать союзы и входить в межгосударственные образования.', tags:['внешняя политика','союзы'] },
 
-            .nav-dot {
-                width: 5px;
-                height: 5px;
-                background: var(--accent);
-                border-radius: 50%;
-                margin-top: -2px;
-            }
+  { type:'chapter', num:'V', title:'Общие положения прав и свобод', section:'Права и свободы' },
+  { type:'article', num:19, chapter:'V', summary:'Права и свободы человека признаются от рождения; все равны перед законом.', full:'В Республике Узбекистан признаются и гарантируются права и свободы человека согласно нормам международного права. Все граждане равны перед законом независимо от пола, расы, национальности, языка, религии, убеждений.', tags:['права','равенство','свободы'] },
+  { type:'article', num:20, chapter:'V', summary:'Права и свободы незыблемы; гражданин и государство связаны взаимными правами.', full:'Права и свободы человека, закреплённые в Конституции и законах, являются незыблемыми. Права и свободы действуют непосредственно. Все противоречия в законодательстве толкуются в пользу человека.', tags:['права','свободы','гарантии'] },
+  { type:'article', num:21, chapter:'V', summary:'Каждый имеет право на свободное развитие личности; права могут ограничиваться только законом.', full:'Каждый человек имеет право на свободное развитие своей личности. Права и свободы могут быть ограничены только в соответствии с законом и лишь в мере, необходимой для защиты конституционного строя и прав других лиц.', tags:['личность','свободы'] },
 
-            /* === ARTICLE FULL MODAL === */
-            .modal-overlay {
-                position: fixed;
-                inset: 0;
-                background: rgba(0, 0, 0, 0.3);
-                z-index: 200;
-                display: none;
-                align-items: flex-end;
-            }
-            .modal-overlay.open {
-                display: flex;
-                animation: fadeIn 0.2s;
-            }
-            @keyframes fadeIn {
-                from {
-                    opacity: 0;
-                }
-                to {
-                    opacity: 1;
-                }
-            }
+  { type:'chapter', num:'VI', title:'Гражданство', section:'Права и свободы' },
+  { type:'article', num:22, chapter:'VI', summary:'Единое гражданство; гражданин Каракалпакстана — одновременно гражданин Узбекистана.', full:'В Республике Узбекистан устанавливается единое гражданство. Гражданство является равным для всех независимо от оснований его приобретения. Гражданин Республики Каракалпакстан является одновременно гражданином Республики Узбекистан.', tags:['гражданство'] },
+  { type:'article', num:23, chapter:'VI', summary:'Государство защищает граждан за рубежом; высылка гражданина запрещена.', full:'Республика Узбекистан гарантирует защиту своим гражданам как на своей территории, так и за её пределами. Гражданин не может быть выслан за пределы Узбекистана или выдан другому государству.', tags:['гражданство','защита'] },
+  { type:'article', num:24, chapter:'VI', summary:'Иностранцам и лицам без гражданства обеспечиваются права согласно международному праву.', full:'Иностранным гражданам и лицам без гражданства, находящимся на территории Республики Узбекистан, обеспечиваются права и свободы в соответствии с нормами международного права.', tags:['иностранцы','права'] },
 
-            .modal-sheet {
-                background: var(--bg);
-                border-radius: 20px 20px 0 0;
-                width: 100%;
-                max-height: 90dvh;
-                display: flex;
-                flex-direction: column;
-                animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            }
-            @keyframes slideUp {
-                from {
-                    transform: translateY(100%);
-                }
-                to {
-                    transform: translateY(0);
-                }
-            }
+  { type:'chapter', num:'VII', title:'Личные права и свободы', section:'Права и свободы' },
+  { type:'article', num:25, chapter:'VII', summary:'Право на жизнь неотъемлемо; смертная казнь в Узбекистане запрещена.', full:'Право на жизнь является неотъемлемым правом каждого человека и охраняется законом. Посягательство на жизнь — тягчайшее преступление. В Республике Узбекистан смертная казнь запрещается.', tags:['жизнь','смертная казнь','права'] },
+  { type:'article', num:26, chapter:'VII', summary:'Честь и достоинство неприкосновенны; пытки и насилие запрещены.', full:'Честь и достоинство человека неприкосновенны. Никто не может быть подвергнут пыткам, насилию, жестокому или унижающему обращению. Медицинские опыты без согласия запрещены.', tags:['достоинство','пытки','права'] },
+  { type:'article', num:27, chapter:'VII', summary:'Каждый имеет право на свободу; арест допускается только по решению суда (до 48 ч. без суда).', full:'Каждый имеет право на свободу и личную неприкосновенность. Арест и заключение под стражу допускаются только по решению суда. Без решения суда лицо не может быть задержано более 48 часов.', tags:['свобода','арест','задержание'] },
+  { type:'article', num:28, chapter:'VII', summary:'Презумпция невиновности; обвиняемый не обязан доказывать свою невиновность.', full:'Лицо считается невиновным, пока его виновность не доказана в суде. Обвиняемому обеспечиваются все возможности для защиты. Подозреваемый не обязан доказывать невиновность и вправе хранить молчание.', tags:['презумпция невиновности','суд','защита'] },
+  { type:'article', num:29, chapter:'VII', summary:'Каждый имеет право на квалифицированную юридическую помощь и адвоката.', full:'Каждому гарантируется право на квалифицированную юридическую помощь. Каждое лицо имеет право пользоваться помощью адвоката на любой стадии уголовного процесса. Доказательства, полученные с нарушением закона, не допускаются.', tags:['адвокат','юридическая помощь','суд'] },
+  { type:'article', num:30, chapter:'VII', summary:'Нельзя осудить по неопубликованному закону; повторное осуждение за то же преступление запрещено.', full:'Никто не может быть осуждён на основании закона, который официально не опубликован. Никто не может быть повторно осуждён за одно и то же преступление.', tags:['суд','закон','осуждение'] },
+  { type:'article', num:31, chapter:'VII', summary:'Право на неприкосновенность частной жизни, тайну переписки и жилища.', full:'Каждый человек имеет право на неприкосновенность частной жизни, личную и семейную тайну. Каждый имеет право на тайну переписки и телефонных переговоров. Каждый имеет право на защиту персональных данных. Обыск допускается только по решению суда.', tags:['частная жизнь','переписка','жилище','данные'] },
+  { type:'article', num:32, chapter:'VII', summary:'Право на свободное передвижение по стране и выезд за рубеж.', full:'Каждый, кто законно находится на территории Республики, имеет право на свободное передвижение и выбор места жительства. Каждый имеет право на свободный выезд за пределы Узбекистана. Гражданин вправе беспрепятственно вернуться в Узбекистан.', tags:['передвижение','выезд'] },
+  { type:'article', num:33, chapter:'VII', summary:'Свобода мысли, слова и убеждений; право на информацию и доступ к Интернету.', full:'Каждый имеет право на свободу мысли, слова и убеждений, право искать и распространять любую информацию. Государство создаёт условия для доступа к сети Интернет. Ограничение допускается только законом.', tags:['свобода слова','информация','интернет'] },
+  { type:'article', num:34, chapter:'VII', summary:'Госорганы обязаны предоставлять гражданам доступ к документам, затрагивающим их права.', full:'Государственные органы и должностные лица обязаны обеспечивать каждому возможность ознакомления с документами, решениями и материалами, затрагивающими его права и законные интересы.', tags:['информация','прозрачность','права'] },
+  { type:'article', num:35, chapter:'VII', summary:'Свобода совести; каждый вправе исповедовать любую религию или не исповедовать никакой.', full:'Свобода совести гарантируется для всех. Каждый имеет право исповедовать любую религию или не исповедовать никакой. Принудительное насаждение религиозных взглядов недопустимо.', tags:['религия','совесть','свобода'] },
 
-            .modal-handle {
-                width: 36px;
-                height: 4px;
-                background: #e5e7eb;
-                border-radius: 2px;
-                margin: 10px auto 0;
-                flex-shrink: 0;
-            }
-            .modal-header {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 14px 20px;
-                border-bottom: 1px solid var(--border);
-                flex-shrink: 0;
-            }
-            .modal-title {
-                font-size: 17px;
-                font-weight: 700;
-                color: var(--accent);
-            }
-            .modal-meta {
-                font-size: 12px;
-                color: var(--text-secondary);
-                margin-top: 2px;
-            }
-            .modal-close {
-                background: var(--bg-secondary);
-                border: none;
-                border-radius: 50%;
-                width: 30px;
-                height: 30px;
-                font-size: 16px;
-                cursor: pointer;
-                color: var(--text-secondary);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            .modal-body {
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
-                padding: 20px 20px 32px;
-                flex: 1;
-            }
-            .modal-article-text {
-                font-family: Georgia, "Times New Roman", serif;
-                font-size: 16px;
-                line-height: 1.75;
-                color: var(--text);
-            }
-            .modal-fav-btn {
-                background: none;
-                border: 1.5px solid var(--border);
-                border-radius: 10px;
-                padding: 6px 14px;
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                font-size: 14px;
-                font-weight: 500;
-                cursor: pointer;
-                color: var(--text-secondary);
-                transition: all 0.2s;
-            }
-            .modal-fav-btn.active {
-                border-color: #fecaca;
-                background: #fff5f5;
-                color: #ef4444;
-            }
+  { type:'chapter', num:'VIII', title:'Политические права', section:'Права и свободы' },
+  { type:'article', num:36, chapter:'VIII', summary:'Граждане участвуют в управлении государством напрямую и через представителей.', full:'Граждане вправе участвовать в управлении делами общества и государства непосредственно и через представителей — путём самоуправления, референдумов и демократического формирования госорганов.', tags:['политические права','участие','управление'] },
+  { type:'article', num:37, chapter:'VIII', summary:'Граждане имеют равный доступ к государственной службе.', full:'Граждане Республики Узбекистан имеют равные права на доступ к государственной службе. Ограничения, связанные с прохождением госслужбы, устанавливаются законом.', tags:['государственная служба','равенство'] },
+  { type:'article', num:38, chapter:'VIII', summary:'Право на митинги, собрания и демонстрации в соответствии с законом.', full:'Граждане вправе осуществлять свою общественную активность в форме митингов, собраний и демонстраций. Органы власти могут приостанавливать их лишь по обоснованным соображениям безопасности.', tags:['митинги','собрания','права'] },
+  { type:'article', num:39, chapter:'VIII', summary:'Право объединяться в профсоюзы, партии и общественные организации.', full:'Граждане вправе объединяться в профессиональные союзы, политические партии и другие общественные объединения. Права оппозиционного меньшинства в партиях не могут ущемляться.', tags:['объединения','партии','профсоюзы'] },
+  { type:'article', num:40, chapter:'VIII', summary:'Право обращаться с жалобами и предложениями в государственные органы.', full:'Каждый вправе обращаться с заявлениями, предложениями и жалобами в государственные органы и должностным лицам. Они должны быть рассмотрены в установленные законом сроки.', tags:['жалобы','обращения','права'] },
 
-            /* Scrollbar */
-            ::-webkit-scrollbar {
-                width: 3px;
-            }
-            ::-webkit-scrollbar-thumb {
-                background: var(--border);
-                border-radius: 2px;
-            }
+  { type:'chapter', num:'IX', title:'Экономические, социальные, культурные и экологические права', section:'Права и свободы' },
+  { type:'article', num:41, chapter:'IX', summary:'Каждый имеет право на собственность; банковская тайна и наследование гарантируются.', full:'Каждый имеет право на собственность. Тайна банковских операций, вкладов и счетов, а также право наследования гарантируются законом.', tags:['собственность','банк','наследование','экономика'] },
+  { type:'article', num:42, chapter:'IX', summary:'Право на достойный труд, справедливую оплату и защиту от безработицы; дискриминация женщин запрещена.', full:'Каждый имеет право на достойный труд, свободный выбор профессии, благоприятные условия труда и справедливое вознаграждение. Запрещается отказывать женщинам в приёме на работу по мотивам беременности.', tags:['труд','работа','зарплата','женщины'] },
+  { type:'article', num:43, chapter:'IX', summary:'Государство обеспечивает занятость, защиту от безработицы и профессиональную переподготовку.', full:'Государство принимает меры по обеспечению занятости граждан, защите их от безработицы и сокращению бедности, организует профессиональную подготовку и переподготовку граждан.', tags:['занятость','безработица','бедность'] },
+  { type:'article', num:44, chapter:'IX', summary:'Принудительный труд запрещён; любые формы вредного детского труда запрещены.', full:'Запрещается принудительный труд иначе как по решению суда. Запрещаются любые формы детского труда, угрожающие здоровью, безопасности и развитию ребёнка или препятствующие его образованию.', tags:['принудительный труд','детский труд'] },
+  { type:'article', num:45, chapter:'IX', summary:'Каждый имеет право на отдых; работающим гарантируется оплачиваемый отпуск.', full:'Каждый имеет право на отдых. Работающим право на отдых обеспечивается установлением рабочего времени, выходных, праздничных дней и оплачиваемого ежегодного трудового отпуска.', tags:['отдых','отпуск','труд'] },
+  { type:'article', num:46, chapter:'IX', summary:'Право на социальное обеспечение в старости, при инвалидности и потере кормильца.', full:'Каждый имеет право на социальное обеспечение в старости, при утрате трудоспособности, безработице и потере кормильца. Размеры пенсий и пособий не могут быть ниже минимальных потребительских расходов.', tags:['пенсия','социальное обеспечение','инвалидность'] },
+  { type:'article', num:47, chapter:'IX', summary:'Право на жилище; выселение только по суду; государство поощряет строительство жилья.', full:'Каждый имеет право на жилище. Никто не может быть лишён жилища иначе как по решению суда. В случае изъятия жилья собственнику обеспечивается предварительное и равноценное возмещение. Государство поощряет жилищное строительство.', tags:['жилище','жильё','выселение'] },
+  { type:'article', num:48, chapter:'IX', summary:'Право на охрану здоровья и медпомощь; часть медуслуг — бесплатно за счёт государства.', full:'Каждый имеет право на охрану здоровья и квалифицированное медицинское обслуживание. Граждане вправе получать гарантированный объём медицинской помощи за счёт государства. Государство создаёт условия для развития физкультуры и здорового образа жизни.', tags:['здоровье','медицина','здравоохранение'] },
+  { type:'article', num:49, chapter:'IX', summary:'Право на благоприятную окружающую среду; государство охраняет экологию и Аральский регион.', full:'Каждый имеет право на благоприятную окружающую среду и достоверную информацию о ней. Государство реализует меры по улучшению и охране окружающей среды, принимает меры по восстановлению экосистемы региона Приаралья.', tags:['экология','окружающая среда','Арал'] },
+  { type:'article', num:50, chapter:'IX', summary:'Право на образование; общее среднее образование обязательно и бесплатно.', full:'Каждый имеет право на образование. Государство гарантирует бесплатное общее среднее и начальное профессиональное образование. Общее среднее образование является обязательным. Обеспечивается инклюзивное образование для детей с особыми потребностями.', tags:['образование','школа','бесплатно'] },
+  { type:'article', num:51, chapter:'IX', summary:'Право на высшее образование на конкурсной основе; вузы имеют академическую свободу.', full:'Граждане вправе получать высшее образование в государственных организациях на конкурсной основе за счёт государства. Высшие учебные заведения имеют право на академическую свободу и самоуправление.', tags:['высшее образование','вуз','конкурс'] },
+  { type:'article', num:52, chapter:'IX', summary:'Труд учителя признаётся основой развития общества; государство заботится о педагогах.', full:'Труд учителя признаётся основой развития общества и государства, формирования здорового поколения. Государство заботится о защите чести учителей, их социальном и материальном благополучии.', tags:['учитель','педагог','образование'] },
+  { type:'article', num:53, chapter:'IX', summary:'Свобода научного и художественного творчества; интеллектуальная собственность охраняется.', full:'Каждому гарантируется свобода научного, технического и художественного творчества, право пользоваться достижениями культуры. Интеллектуальная собственность охраняется законом.', tags:['творчество','наука','интеллектуальная собственность','культура'] },
 
-            .count-badge {
-                background: var(--accent);
-                color: white;
-                font-size: 10px;
-                font-weight: 700;
-                border-radius: 8px;
-                padding: 1px 6px;
-                position: absolute;
-                top: 6px;
-                right: calc(50% - 18px);
-            }
-            .nav-btn {
-                position: relative;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="app-header">
-            <h1>🇺🇿 Конституция</h1>
-            <p>Республика Узбекистан · Редакция 2023 года</p>
-        </div>
+  { type:'chapter', num:'X', title:'Гарантии прав и свобод', section:'Права и свободы' },
+  { type:'article', num:54, chapter:'X', summary:'Обеспечение прав и свобод человека — высшая цель государства.', full:'Обеспечение прав и свобод человека — высшая цель государства. Государство обеспечивает права и свободы, закреплённые Конституцией и законами.', tags:['права','гарантии','государство'] },
+  { type:'article', num:55, chapter:'X', summary:'Гарантируется судебная защита прав; право обратиться в международные органы.', full:'Каждый вправе защищать свои права всеми способами, не запрещёнными законом. Каждому гарантируется судебная защита прав и право обжалования в суд. Каждый вправе обращаться в международные органы по защите прав человека.', tags:['судебная защита','права','международные органы'] },
+  { type:'article', num:56, chapter:'X', summary:'Национальные институты по правам человека содействуют гражданскому обществу.', full:'Национальные институты по правам человека дополняют формы защиты прав и свобод, содействуют развитию гражданского общества и повышению культуры прав человека.', tags:['права человека','институты','гражданское общество'] },
+  { type:'article', num:57, chapter:'X', summary:'Государство защищает пенсионеров, инвалидов и социально уязвимые категории населения.', full:'Права нетрудоспособных и одиноких престарелых, лиц с инвалидностью и других социально уязвимых категорий находятся под защитой государства. Государство создаёт условия для их полноценного участия в общественной жизни.', tags:['инвалиды','пенсионеры','социальная защита'] },
+  { type:'article', num:58, chapter:'X', summary:'Женщины и мужчины имеют равные права во всех сферах жизни.', full:'Женщины и мужчины имеют равные права. Государство обеспечивает равенство прав и возможностей в управлении делами общества и государства, а также в других сферах жизни.', tags:['равенство','женщины','права'] },
 
-        <div class="main-content" id="mainContent">
-            <!-- Search Tab -->
-            <div class="tab-pane active" id="tab-search">
-                <div class="search-bar-wrap">
-                    <div class="search-bar">
-                        <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2.5"
-                        >
-                            <circle cx="11" cy="11" r="8" />
-                            <path d="m21 21-4.35-4.35" />
-                        </svg>
-                        <input
-                            type="text"
-                            id="searchInput"
-                            placeholder="Поиск по статьям, главам, разделам…"
-                            autocomplete="off"
-                            autocorrect="off"
-                            spellcheck="false"
-                        />
-                        <button id="clearBtn">✕</button>
-                    </div>
-                </div>
-                <div class="results-info" id="resultsInfo"></div>
-                <div id="searchResults"></div>
-            </div>
+  { type:'chapter', num:'XI', title:'Обязанности граждан', section:'Права и свободы' },
+  { type:'article', num:59, chapter:'XI', summary:'Все граждане несут обязанности, закреплённые Конституцией.', full:'Все граждане несут обязанности, закреплённые за ними в Конституции.', tags:['обязанности','граждане'] },
+  { type:'article', num:60, chapter:'XI', summary:'Обязанность соблюдать Конституцию и уважать права других.', full:'Граждане обязаны соблюдать Конституцию и законы, уважать права, свободы, честь и достоинство других людей.', tags:['обязанности','конституция','закон'] },
+  { type:'article', num:61, chapter:'XI', summary:'Обязанность беречь историческое и культурное наследие народа Узбекистана.', full:'Граждане обязаны оберегать историческое, духовное, культурное, научное и природное наследие народа Узбекистана. Наследие охраняется государством.', tags:['обязанности','наследие','культура'] },
+  { type:'article', num:62, chapter:'XI', summary:'Обязанность бережно относиться к окружающей природной среде.', full:'Граждане обязаны бережно относиться к окружающей природной среде.', tags:['обязанности','экология','природа'] },
+  { type:'article', num:63, chapter:'XI', summary:'Обязанность платить законно установленные налоги и сборы.', full:'Граждане обязаны платить установленные законом налоги и сборы. Налоги должны быть справедливыми и не препятствовать реализации конституционных прав.', tags:['обязанности','налоги','сборы'] },
+  { type:'article', num:64, chapter:'XI', summary:'Защита Родины — долг каждого гражданина; военная или альтернативная служба обязательны.', full:'Защита Республики Узбекистан — долг каждого гражданина. Граждане обязаны нести военную или альтернативную службу в порядке, установленном законом.', tags:['обязанности','военная служба','защита'] },
 
-            <!-- Contents Tab -->
-            <div class="tab-pane" id="tab-contents">
-                <div id="tocView"></div>
-                <div id="chapterView" style="display: none"></div>
-            </div>
+  { type:'chapter', num:'XII', title:'Экономические основы общества', section:'Общество и личность' },
+  { type:'article', num:65, chapter:'XII', summary:'Основа экономики — собственность в разных формах; частная собственность неприкосновенна.', full:'Основу экономики Узбекистана составляет собственность в её различных формах. Государство гарантирует свободу экономической деятельности. Частная собственность неприкосновенна; лишить её можно только по решению суда.', tags:['экономика','собственность','предпринимательство'] },
+  { type:'article', num:66, chapter:'XII', summary:'Собственник вправе владеть и распоряжаться имуществом, не нарушая прав других.', full:'Собственник по своему усмотрению владеет, пользуется и распоряжается имуществом. Пользование имуществом не должно причинять ущерб среде или нарушать права других лиц.', tags:['собственность','имущество'] },
+  { type:'article', num:67, chapter:'XII', summary:'Государство обеспечивает благоприятный инвестиционный климат; монополия ограничивается.', full:'Государство обеспечивает благоприятный инвестиционный и деловой климат. Гарантируется единство экономического пространства и свободное перемещение товаров. Монополистическая деятельность регулируется и ограничивается законом.', tags:['инвестиции','бизнес','монополия','экономика'] },
+  { type:'article', num:68, chapter:'XII', summary:'Земля и природные ресурсы — общенациональное богатство; земля может быть в частной собственности.', full:'Земля, её недра, воды, растительный и животный мир — общенациональное богатство, охраняемое государством. Земля может находиться в частной собственности на условиях, предусмотренных законом.', tags:['земля','природные ресурсы','собственность'] },
 
-            <!-- Favorites Tab -->
-            <div class="tab-pane" id="tab-favorites">
-                <div id="favView"></div>
-            </div>
-        </div>
+  { type:'chapter', num:'XIII', title:'Институты гражданского общества', section:'Общество и личность' },
+  { type:'article', num:69, chapter:'XIII', summary:'Гражданское общество образуют общественные объединения, СМИ и органы самоуправления.', full:'Институты гражданского общества, в том числе общественные объединения, негосударственные некоммерческие организации, органы самоуправления граждан и СМИ образуют основу гражданского общества.', tags:['гражданское общество','СМИ','НКО'] },
+  { type:'article', num:70, chapter:'XIII', summary:'Общественными объединениями признаются профсоюзы, партии, союзы и движения; роспуск — только судом.', full:'В Республике признаются профессиональные союзы, политические партии, общества учёных, женские, молодёжные и другие объединения граждан. Роспуск или запрет их деятельности — только по решению суда.', tags:['объединения','партии','профсоюзы'] },
+  { type:'article', num:71, chapter:'XIII', summary:'Запрещены партии и организации, направленные против суверенитета, разжигающие ненависть.', full:'Запрещается создание партий и организаций, имеющих целью насильственное изменение конституционного строя, пропагандирующих войну, национальную или религиозную вражду. Запрещено создание тайных обществ.', tags:['запрет','экстремизм','партии'] },
+  { type:'article', num:72, chapter:'XIII', summary:'Государство не вмешивается в деятельность НКО и обеспечивает их равные возможности.', full:'Государство обеспечивает права НКО и создаёт им равные возможности для участия в жизни общества. Взаимное невмешательство государственных органов и НКО в деятельность друг друга.', tags:['НКО','гражданское общество'] },
+  { type:'article', num:73, chapter:'XIII', summary:'Профсоюзы защищают социально-экономические права работников; членство — добровольное.', full:'Профессиональные союзы выражают и защищают социально-экономические права и интересы работников. Членство в профессиональных союзах — добровольное.', tags:['профсоюзы','труд','права'] },
+  { type:'article', num:74, chapter:'XIII', summary:'Политические партии участвуют в формировании власти и публично отчитываются о финансировании.', full:'Политические партии выражают политическую волю различных социальных слоёв и участвуют в формировании государственной власти. Партии представляют публичные отчёты об источниках финансирования деятельности.', tags:['партии','власть','финансирование'] },
+  { type:'article', num:75, chapter:'XIII', summary:'Религиозные организации отделены от государства и равны перед законом.', full:'Религиозные организации отделены от государства и равны перед законом. Государство не вмешивается в деятельность религиозных организаций и гарантирует свободу их деятельности.', tags:['религия','организации','государство'] },
+];
 
-        <!-- Bottom Nav -->
-        <nav class="bottom-nav">
-            <button
-                class="nav-btn active"
-                id="navSearch"
-                onclick="switchTab('search')"
-            >
-                <span class="nav-icon">🔍</span>
-                <span class="nav-label">Поиск</span>
-            </button>
-            <button
-                class="nav-btn"
-                id="navContents"
-                onclick="switchTab('contents')"
-            >
-                <span class="nav-icon">📋</span>
-                <span class="nav-label">Содержание</span>
-            </button>
-            <button
-                class="nav-btn"
-                id="navFavorites"
-                onclick="switchTab('favorites')"
-            >
-                <span class="nav-icon">❤️</span>
-                <span class="nav-label">Избранное</span>
-            </button>
-        </nav>
+const filterTags = {
+  rights: ['права','свободы','гарантии','защита','достоинство'],
+  economy: ['экономика','собственность','труд','бизнес','инвестиции','предпринимательство'],
+  duties: ['обязанности']
+};
 
-        <!-- Modal -->
-        <div
-            class="modal-overlay"
-            id="modalOverlay"
-            onclick="closeModal(event)"
-        >
-            <div class="modal-sheet" id="modalSheet">
-                <div class="modal-handle"></div>
-                <div class="modal-header">
-                    <div>
-                        <div class="modal-title" id="modalTitle"></div>
-                        <div class="modal-meta" id="modalMeta"></div>
-                    </div>
-                    <div style="display: flex; gap: 8px; align-items: center">
-                        <button
-                            class="modal-fav-btn"
-                            id="modalFavBtn"
-                            onclick="toggleFavModal()"
-                        >
-                            ❤️ Избранное
-                        </button>
-                        <button
-                            class="modal-close"
-                            onclick="closeModalDirect()"
-                        >
-                            ✕
-                        </button>
-                    </div>
-                </div>
-                <div class="modal-body">
-                    <div class="modal-article-text" id="modalText"></div>
-                </div>
-            </div>
-        </div>
+let activeFilter = 'all';
+let expandedCards = new Set();
 
-        <script>
-            // ============================================================
-            // DATA: КОНСТИТУЦИЯ УЗБЕКИСТАНА 2023
-            // ============================================================
-            const constitution = [
-                // РАЗДЕЛ ПЕРВЫЙ: ОСНОВНЫЕ ПРИНЦИПЫ
-                {
-                    id: 1,
-                    title: "Статья 1",
-                    text: "Узбекистан — суверенная демократическая республика. Наименования «Республика Узбекистан» и «Узбекистан» равнозначны.",
-                    chapter: "Глава I. Государственный суверенитет",
-                    section:
-                        "Раздел первый. Основные принципы конституционного строя",
-                },
-                {
-                    id: 2,
-                    title: "Статья 2",
-                    text: "Государство выражает волю народа и служит его интересам. Государственные органы и должностные лица ответственны перед обществом и гражданами.",
-                    chapter: "Глава I. Государственный суверенитет",
-                    section:
-                        "Раздел первый. Основные принципы конституционного строя",
-                },
-                {
-                    id: 3,
-                    title: "Статья 3",
-                    text: "Государственный суверенитет Узбекистана распространяется на всю его территорию. Государство обеспечивает верховенство Конституции и законов Республики Узбекистан на всей её территории.",
-                    chapter: "Глава I. Государственный суверенитет",
-                    section:
-                        "Раздел первый. Основные принципы конституционного строя",
-                },
-                {
-                    id: 4,
-                    title: "Статья 4",
-                    text: "Государственным языком Республики Узбекистан является узбекский язык. Республика Узбекистан обеспечивает уважительное отношение к языкам, обычаям и традициям всех национальностей и народностей, проживающих на её территории, создание условий для их развития.",
-                    chapter: "Глава I. Государственный суверенитет",
-                    section:
-                        "Раздел первый. Основные принципы конституционного строя",
-                },
-                {
-                    id: 5,
-                    title: "Статья 5",
-                    text: "Республика Узбекистан имеет свои государственные символы — флаг, герб и гимн. Их описание и порядок официального использования устанавливаются законом.",
-                    chapter: "Глава I. Государственный суверенитет",
-                    section:
-                        "Раздел первый. Основные принципы конституционного строя",
-                },
-                {
-                    id: 6,
-                    title: "Статья 6",
-                    text: "Столицей Республики Узбекистан является город Ташкент.",
-                    chapter: "Глава I. Государственный суверенитет",
-                    section:
-                        "Раздел первый. Основные принципы конституционного строя",
-                },
-                {
-                    id: 7,
-                    title: "Статья 7",
-                    text: "Народ является единственным источником государственной власти. Государственная власть в Республике Узбекистан осуществляется в интересах народа и только уполномоченными им государственными органами. Никакая часть общества, политическая партия, общественное объединение, движение либо отдельное лицо не может выступать от имени народа Узбекистана. Присвоение полномочий государственной власти, отстранение законно избранных и назначенных органов и должностных лиц от выполнения своих полномочий, приостановление или роспуск деятельности законно избранных органов влечёт ответственность по закону.",
-                    chapter: "Глава II. Народовластие",
-                    section:
-                        "Раздел первый. Основные принципы конституционного строя",
-                },
-                {
-                    id: 8,
-                    title: "Статья 8",
-                    text: "Народ Узбекистана составляют граждане Республики Узбекистан независимо от их национальности. Гражданство Республики Узбекистан регулируется законом.",
-                    chapter: "Глава II. Народовластие",
-                    section:
-                        "Раздел первый. Основные принципы конституционного строя",
-                },
-                {
-                    id: 9,
-                    title: "Статья 9",
-                    text: "Наиболее важные вопросы общественной и государственной жизни выносятся на обсуждение народа, ставятся на всенародное голосование (референдум). Порядок проведения референдума устанавливается законом.",
-                    chapter: "Глава II. Народовластие",
-                    section:
-                        "Раздел первый. Основные принципы конституционного строя",
-                },
-                {
-                    id: 10,
-                    title: "Статья 10",
-                    text: "Внешняя политика Республики Узбекистан направлена на обеспечение государственного суверенитета и независимости страны, защиту интересов народа и государства. Узбекистан придерживается принципов: суверенного равенства государств, неприменения силы или угрозы силой, нерушимости государственных границ, мирного урегулирования споров, невмешательства во внутренние дела других государств и иных общепризнанных принципов международного права.",
-                    chapter: "Глава III. Верховенство Конституции и закона",
-                    section:
-                        "Раздел первый. Основные принципы конституционного строя",
-                },
-                {
-                    id: 11,
-                    title: "Статья 11",
-                    text: "Система государственной власти Узбекистана основывается на принципе разделения властей между законодательной, исполнительной и судебной ветвями.",
-                    chapter: "Глава III. Верховенство Конституции и закона",
-                    section:
-                        "Раздел первый. Основные принципы конституционного строя",
-                },
-                {
-                    id: 12,
-                    title: "Статья 12",
-                    text: "В Узбекистане общественная жизнь развивается на основе многообразия политических институтов, идеологий и мнений. Никакая идеология не может устанавливаться в качестве государственной.",
-                    chapter: "Глава III. Верховенство Конституции и закона",
-                    section:
-                        "Раздел первый. Основные принципы конституционного строя",
-                },
-                {
-                    id: 13,
-                    title: "Статья 13",
-                    text: "Демократия в Республике Узбекистан базируется на общечеловеческих принципах, согласно которым высшей ценностью являются человек, его жизнь, свобода, честь, достоинство и другие неотъемлемые права.",
-                    chapter: "Глава III. Верховенство Конституции и закона",
-                    section:
-                        "Раздел первый. Основные принципы конституционного строя",
-                },
-                {
-                    id: 14,
-                    title: "Статья 14",
-                    text: "Государство строит свою деятельность на принципах социальной справедливости и законности в интересах благосостояния человека и общества.",
-                    chapter: "Глава III. Верховенство Конституции и закона",
-                    section:
-                        "Раздел первый. Основные принципы конституционного строя",
-                },
-                {
-                    id: 15,
-                    title: "Статья 15",
-                    text: "Конституция Республики Узбекистан обладает высшей юридической силой. Законы и иные правовые акты, принятые в Республике Узбекистан, должны соответствовать Конституции. Государство, его органы, должностные лица, общественные объединения, граждане действуют в соответствии с Конституцией и законами.",
-                    chapter: "Глава III. Верховенство Конституции и закона",
-                    section:
-                        "Раздел первый. Основные принципы конституционного строя",
-                },
-                {
-                    id: 16,
-                    title: "Статья 16",
-                    text: "Ни одно положение настоящей Конституции не может толковаться в ущерб правам и интересам Республики Узбекистан.",
-                    chapter: "Глава III. Верховенство Конституции и закона",
-                    section:
-                        "Раздел первый. Основные принципы конституционного строя",
-                },
-                {
-                    id: 17,
-                    title: "Статья 17",
-                    text: "Республика Узбекистан является полноправным субъектом международных отношений. Её внешняя политика исходит из принципов суверенного равенства государств, мирного разрешения международных споров и конфликтов, взаимовыгодного сотрудничества. Международные договоры Республики Узбекистан являются составной частью её правовой системы. Если международным договором Республики Узбекистан установлены иные правила, чем предусмотренные законом, то применяются правила международного договора.",
-                    chapter: "Глава III. Верховенство Конституции и закона",
-                    section:
-                        "Раздел первый. Основные принципы конституционного строя",
-                },
-                {
-                    id: 18,
-                    title: "Статья 18",
-                    text: "Все граждане Республики Узбекистан имеют одинаковые права и свободы и равны перед законом без различия пола, расы, национальности, языка, религии, социального происхождения, убеждений, личного и общественного положения.",
-                    chapter: "Глава IV. Внешняя политика",
-                    section:
-                        "Раздел первый. Основные принципы конституционного строя",
-                },
-                {
-                    id: 19,
-                    title: "Статья 19",
-                    text: "Гражданин Республики Узбекистан не может быть лишён гражданства и права изменить гражданство, а также выдан иностранному государству. Государство заботится о защите прав и интересов граждан Республики Узбекистан за рубежом.",
-                    chapter: "Глава IV. Внешняя политика",
-                    section:
-                        "Раздел первый. Основные принципы конституционного строя",
-                },
-                {
-                    id: 20,
-                    title: "Статья 20",
-                    text: "Осуществление прав и свобод гражданином не должно нарушать права, свободы и законные интересы других граждан, государства и общества.",
-                    chapter: "Глава IV. Внешняя политика",
-                    section:
-                        "Раздел первый. Основные принципы конституционного строя",
-                },
-                // РАЗДЕЛ ВТОРОЙ: ОСНОВНЫЕ ПРАВА, СВОБОДЫ И ОБЯЗАННОСТИ ЧЕЛОВЕКА И ГРАЖДАНИНА
-                {
-                    id: 21,
-                    title: "Статья 21",
-                    text: "Права и свободы граждан, закреплённые в Конституции и законах, являются незыблемыми, и никто не вправе ущемить, отменить или ограничить их без достаточных оснований.",
-                    chapter: "Глава V. Гражданство",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 22,
-                    title: "Статья 22",
-                    text: "Государство гарантирует соблюдение прав и свобод граждан. Защита прав и свобод граждан осуществляется в судебном порядке.",
-                    chapter: "Глава V. Гражданство",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 23,
-                    title: "Статья 23",
-                    text: "Государство вправе ограничивать права и свободы граждан только в целях обеспечения прав и свобод других граждан, общественного порядка, безопасности и экономического благосостояния общества.",
-                    chapter: "Глава V. Гражданство",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 24,
-                    title: "Статья 24",
-                    text: "Право на жизнь есть неотъемлемое право каждого человека и охраняется законом. Посягательство на жизнь человека является тягчайшим преступлением.",
-                    chapter: "Глава VI. Личные права и свободы",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 25,
-                    title: "Статья 25",
-                    text: "Каждый имеет право на свободу и личную неприкосновенность. Никто не может быть подвергнут аресту или содержанию под стражей иначе как на основании закона.",
-                    chapter: "Глава VI. Личные права и свободы",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 26,
-                    title: "Статья 26",
-                    text: "Каждый обвиняемый в совершении преступления считается невиновным, пока его виновность не будет установлена законным порядком, путём гласного судебного разбирательства, при котором ему обеспечиваются все возможности для защиты. Никто не обязан доказывать свою невиновность. Сомнения в виновности трактуются в пользу обвиняемого.",
-                    chapter: "Глава VI. Личные права и свободы",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 27,
-                    title: "Статья 27",
-                    text: "Каждый имеет право на защиту от незаконных посягательств на его честь и достоинство, вмешательства в его частную жизнь, на неприкосновенность его жилища. Никто не вправе войти в жилище, производить обыск или осмотр, нарушать тайну переписки и телефонных переговоров иначе как в случаях и порядке, предусмотренных законом.",
-                    chapter: "Глава VI. Личные права и свободы",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 28,
-                    title: "Статья 28",
-                    text: "Гражданам Республики Узбекистан гарантируется свобода передвижения по территории республики, въезда в Республику Узбекистан и выезда из неё, за исключением ограничений, установленных законом.",
-                    chapter: "Глава VI. Личные права и свободы",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 29,
-                    title: "Статья 29",
-                    text: "Каждый имеет право на свободу мысли, слова и убеждений. Каждый имеет право искать, получать и распространять любую информацию, за исключением направленной против существующего конституционного строя и других ограничений, предусмотренных законом. Монополизация средств массовой информации, использование их в ущерб интересам общества и государства не допускается.",
-                    chapter: "Глава VII. Политические права",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 30,
-                    title: "Статья 30",
-                    text: "Сведения о деятельности государственных органов власти и управления, общественных объединений, предприятий, учреждений и организаций являются открытыми и общедоступными, за исключением случаев, предусмотренных законом.",
-                    chapter: "Глава VII. Политические права",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 31,
-                    title: "Статья 31",
-                    text: "Свобода совести гарантируется для всех. Каждый имеет право исповедовать любую религию или не исповедовать никакой. Принудительное насаждение религиозных взглядов не допускается.",
-                    chapter: "Глава VII. Политические права",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 32,
-                    title: "Статья 32",
-                    text: "Граждане Республики Узбекистан имеют право участвовать в управлении делами общества и государства как непосредственно, так и через своих представителей. Такое участие осуществляется посредством самоуправления, проведения референдумов и демократического формирования государственных органов. Порядок организации самоуправления определяется законом.",
-                    chapter: "Глава VII. Политические права",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 33,
-                    title: "Статья 33",
-                    text: "Граждане имеют право собираться и проводить собрания, митинги и демонстрации в соответствии с законодательством.",
-                    chapter: "Глава VII. Политические права",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 34,
-                    title: "Статья 34",
-                    text: "Граждане Республики Узбекистан имеют право объединяться в профессиональные союзы, политические партии и другие общественные объединения, участвовать в массовых движениях. Никто не может ущемлять права, свободы и достоинство лиц, составляющих оппозицию в политических партиях, других общественных объединениях.",
-                    chapter: "Глава VII. Политические права",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 35,
-                    title: "Статья 35",
-                    text: "Каждый имеет право индивидуально или совместно с другими лицами обращаться с заявлениями, предложениями и жалобами в компетентные государственные органы, учреждения или к народным представителям. Заявления, предложения и жалобы граждан должны быть рассмотрены в установленные законом порядке и сроки.",
-                    chapter: "Глава VII. Политические права",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 36,
-                    title: "Статья 36",
-                    text: "Каждый имеет право на труд, на свободный выбор работы, справедливые условия труда и защиту от безработицы в порядке, установленном законом.",
-                    chapter: "Глава VIII. Экономические и социальные права",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 37,
-                    title: "Статья 37",
-                    text: "Принудительный труд допускается только в порядке исполнения наказания по приговору суда либо в иных случаях, предусмотренных законом.",
-                    chapter: "Глава VIII. Экономические и социальные права",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 38,
-                    title: "Статья 38",
-                    text: "Граждане имеют право на отдых. Это право обеспечивается установлением продолжительности рабочего дня, предоставлением еженедельных выходных дней, а также оплачиваемого ежегодного отпуска.",
-                    chapter: "Глава VIII. Экономические и социальные права",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 39,
-                    title: "Статья 39",
-                    text: "Граждане имеют право на социальное обеспечение в старости, в случае утраты трудоспособности, а также потери кормильца и в других установленных законом случаях.",
-                    chapter: "Глава VIII. Экономические и социальные права",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 40,
-                    title: "Статья 40",
-                    text: "Каждый имеет право на квалифицированную медицинскую помощь.",
-                    chapter: "Глава VIII. Экономические и социальные права",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 41,
-                    title: "Статья 41",
-                    text: "Каждый имеет право на образование. Государство гарантирует бесплатное общее образование. Школьное образование находится под надзором государства.",
-                    chapter: "Глава VIII. Экономические и социальные права",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 42,
-                    title: "Статья 42",
-                    text: "Государство заботится о развитии культуры, науки и искусства. Каждый гражданин имеет право пользоваться достижениями культуры.",
-                    chapter: "Глава VIII. Экономические и социальные права",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 43,
-                    title: "Статья 43",
-                    text: "Государство обеспечивает права и свободы граждан, закреплённые Конституцией и законами.",
-                    chapter: "Глава VIII. Экономические и социальные права",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 44,
-                    title: "Статья 44",
-                    text: "Каждому гарантируется судебная защита его прав и свобод, право обжалования в суде незаконных действий государственных органов, должностных лиц и общественных объединений.",
-                    chapter: "Глава VIII. Экономические и социальные права",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 45,
-                    title: "Статья 45",
-                    text: "Права несовершеннолетних, нетрудоспособных и одиноких престарелых находятся под защитой государства.",
-                    chapter: "Глава VIII. Экономические и социальные права",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 46,
-                    title: "Статья 46",
-                    text: "Женщины и мужчины имеют равные права. Равноправие в политической, экономической и культурной жизни обеспечивается законом и иными нормативными правовыми актами.",
-                    chapter: "Глава IX. Охрана семьи",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 47,
-                    title: "Статья 47",
-                    text: "Граждане несут ответственность перед государством за соблюдение Конституции и законов. Незнание закона не освобождает от ответственности.",
-                    chapter: "Глава IX. Охрана семьи",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 48,
-                    title: "Статья 48",
-                    text: "Гражданин обязан соблюдать Конституцию и законы Республики Узбекистан, уважать права, свободы, честь и достоинство других лиц.",
-                    chapter: "Глава IX. Охрана семьи",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 49,
-                    title: "Статья 49",
-                    text: "Охрана природы является обязанностью каждого. Нарушителям природоохранного законодательства несут ответственность в установленном порядке.",
-                    chapter: "Глава IX. Охрана семьи",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 50,
-                    title: "Статья 50",
-                    text: "Граждане обязаны заботиться об историческом, духовном и культурном наследии.",
-                    chapter: "Глава IX. Охрана семьи",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 51,
-                    title: "Статья 51",
-                    text: "Уплата налогов и сборов, установленных законодательством, является обязанностью граждан.",
-                    chapter: "Глава IX. Охрана семьи",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                {
-                    id: 52,
-                    title: "Статья 52",
-                    text: "Защита Республики Узбекистан является долгом и обязанностью каждого гражданина. Граждане обязаны нести военную службу в соответствии с порядком, установленным законом.",
-                    chapter: "Глава IX. Охрана семьи",
-                    section:
-                        "Раздел второй. Основные права, свободы и обязанности человека и гражданина",
-                },
-                // РАЗДЕЛ ТРЕТИЙ: ОБЩЕСТВО И ЛИЧНОСТЬ
-                {
-                    id: 53,
-                    title: "Статья 53",
-                    text: "Основу экономики Узбекистана, направленной на улучшение благосостояния человека и общества, составляет собственность в её различных формах. Государство одинаково защищает все формы собственности.",
-                    chapter: "Глава X. Экономические основы общества",
-                    section: "Раздел третий. Общество и личность",
-                },
-                {
-                    id: 54,
-                    title: "Статья 54",
-                    text: "Собственник по своему усмотрению владеет, пользуется и распоряжается принадлежащим ему имуществом. Использование имущества не должно причинять ущерб экологической среде, правам и охраняемым законом интересам граждан, юридических лиц и государства.",
-                    chapter: "Глава X. Экономические основы общества",
-                    section: "Раздел третий. Общество и личность",
-                },
-                {
-                    id: 55,
-                    title: "Статья 55",
-                    text: "Земля, её недра, воды, растительный и животный мир и другие природные ресурсы являются общенациональным богатством, рационально использоваться и охраняться государством.",
-                    chapter: "Глава X. Экономические основы общества",
-                    section: "Раздел третий. Общество и личность",
-                },
-                {
-                    id: 56,
-                    title: "Статья 56",
-                    text: "Монопольная деятельность регулируется и ограничивается законом. Добросовестная конкуренция в хозяйственной деятельности поощряется.",
-                    chapter: "Глава X. Экономические основы общества",
-                    section: "Раздел третий. Общество и личность",
-                },
-                {
-                    id: 57,
-                    title: "Статья 57",
-                    text: "Создание и деятельность политических партий ставящих своей целью насильственное изменение конституционного строя, выступающих против суверенитета, целостности и безопасности республики, конституционных прав и свобод граждан, пропагандирующих войну, социальную, национальную, расовую и религиозную вражду, не допускаются.",
-                    chapter: "Глава XI. Общественные объединения",
-                    section: "Раздел третий. Общество и личность",
-                },
-                {
-                    id: 58,
-                    title: "Статья 58",
-                    text: "Государство и общественные объединения действуют в рамках Конституции и законов.",
-                    chapter: "Глава XI. Общественные объединения",
-                    section: "Раздел третий. Общество и личность",
-                },
-                {
-                    id: 59,
-                    title: "Статья 59",
-                    text: "Политические партии выражают политическую волю различных социальных слоёв и групп, посредством своих демократически избранных представителей участвуют в формировании государственной власти. Порядок деятельности политических партий регулируется законом.",
-                    chapter: "Глава XI. Общественные объединения",
-                    section: "Раздел третий. Общество и личность",
-                },
-                {
-                    id: 60,
-                    title: "Статья 60",
-                    text: "Профессиональные союзы выражают и защищают социально-экономические права и интересы членов профсоюза. Членство в профессиональных союзах добровольно.",
-                    chapter: "Глава XI. Общественные объединения",
-                    section: "Раздел третий. Общество и личность",
-                },
-                {
-                    id: 61,
-                    title: "Статья 61",
-                    text: "Религиозные организации и объединения отделены от государства и равны перед законом. Государство не вмешивается в деятельность религиозных объединений.",
-                    chapter: "Глава XI. Общественные объединения",
-                    section: "Раздел третий. Общество и личность",
-                },
-                {
-                    id: 62,
-                    title: "Статья 62",
-                    text: "Средства массовой информации свободны и действуют в соответствии с законом. Цензура запрещается.",
-                    chapter: "Глава XI. Общественные объединения",
-                    section: "Раздел третий. Общество и личность",
-                },
-                {
-                    id: 63,
-                    title: "Статья 63",
-                    text: "Семья является основной ячейкой общества и имеет право на защиту общества и государства. Брак основывается на добровольном согласии и равноправии обоих супругов.",
-                    chapter: "Глава XII. Семья",
-                    section: "Раздел третий. Общество и личность",
-                },
-                {
-                    id: 64,
-                    title: "Статья 64",
-                    text: "Родители обязаны содержать и воспитывать детей до их совершеннолетия. Государство и общество обеспечивают содержание, воспитание и образование детей-сирот и детей, лишённых родительской опеки.",
-                    chapter: "Глава XII. Семья",
-                    section: "Раздел третий. Общество и личность",
-                },
-                {
-                    id: 65,
-                    title: "Статья 65",
-                    text: "Совершеннолетние дети обязаны содержать родителей и заботиться о них.",
-                    chapter: "Глава XII. Семья",
-                    section: "Раздел третий. Общество и личность",
-                },
-                {
-                    id: 66,
-                    title: "Статья 66",
-                    text: "Охрана здоровья граждан является приоритетным направлением деятельности государства и общества.",
-                    chapter: "Глава XIII. Охрана окружающей среды",
-                    section: "Раздел третий. Общество и личность",
-                },
-                {
-                    id: 67,
-                    title: "Статья 67",
-                    text: "Государство осуществляет контроль за состоянием окружающей среды, принимает меры по охране природы и предотвращению экологических катастроф.",
-                    chapter: "Глава XIII. Охрана окружающей среды",
-                    section: "Раздел третий. Общество и личность",
-                },
-                // РАЗДЕЛ ЧЕТВЁРТЫЙ: АДМИНИСТРАТИВНО-ТЕРРИТОРИАЛЬНОЕ УСТРОЙСТВО
-                {
-                    id: 68,
-                    title: "Статья 68",
-                    text: "Республика Узбекистан состоит из областей, районов, городов, посёлков, кишлаков, аулов, а также Республики Каракалпакстан.",
-                    chapter:
-                        "Глава XIV. Административно-территориальное устройство",
-                    section:
-                        "Раздел четвёртый. Административно-территориальное устройство",
-                },
-                {
-                    id: 69,
-                    title: "Статья 69",
-                    text: "Административно-территориальное деление и порядок решения вопросов административно-территориального устройства регулируются законом.",
-                    chapter:
-                        "Глава XIV. Административно-территориальное устройство",
-                    section:
-                        "Раздел четвёртый. Административно-территориальное устройство",
-                },
-                // РАЗДЕЛ ПЯТЫЙ: ОРГАНИЗАЦИЯ ГОСУДАРСТВЕННОЙ ВЛАСТИ
-                {
-                    id: 70,
-                    title: "Статья 70",
-                    text: "Олий Мажлис Республики Узбекистан является высшим государственным представительным органом, осуществляющим законодательную власть. Олий Мажлис состоит из двух палат — Законодательной палаты (нижняя палата) и Сената (верхняя палата). Срок полномочий Законодательной палаты и Сената Олий Мажлиса — пять лет.",
-                    chapter: "Глава XV. Олий Мажлис",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 71,
-                    title: "Статья 71",
-                    text: "Законодательная палата Олий Мажлиса состоит из ста пятидесяти депутатов, избираемых по территориальным избирательным округам на основе многопартийности.",
-                    chapter: "Глава XV. Олий Мажлис",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 72,
-                    title: "Статья 72",
-                    text: "Сенат является палатой территориального представительства. Члены Сената (сенаторы) являются представителями Республики Каракалпакстан, областей и города Ташкента.",
-                    chapter: "Глава XV. Олий Мажлис",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 73,
-                    title: "Статья 73",
-                    text: "Депутатом Законодательной палаты может быть гражданин Республики Узбекистан, достигший двадцати пяти лет. Сенатором может быть гражданин Республики Узбекистан, достигший тридцати лет и постоянно проживающий на территории соответствующей области, города Ташкента или Республики Каракалпакстан не менее трёх лет.",
-                    chapter: "Глава XV. Олий Мажлис",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 74,
-                    title: "Статья 74",
-                    text: "Одно и то же лицо не может быть одновременно депутатом Законодательной палаты и членом Сената Олий Мажлиса.",
-                    chapter: "Глава XV. Олий Мажлис",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 75,
-                    title: "Статья 75",
-                    text: "Законодательная палата и Сенат самостоятельно решают вопросы своей внутренней организации и порядка работы.",
-                    chapter: "Глава XV. Олий Мажлис",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 76,
-                    title: "Статья 76",
-                    text: "Олий Мажлис Республики Узбекистан правомочен рассматривать и решать любые вопросы государственной и общественной жизни.",
-                    chapter: "Глава XV. Олий Мажлис",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 77,
-                    title: "Статья 77",
-                    text: "К ведению Законодательной палаты относится: принятие Конституции Республики Узбекистан и конституционных законов, внесение в них изменений и дополнений; принятие законов, толкование законов Республики Узбекистан; назначение выборов Президента Республики Узбекистан; обсуждение и принятие Государственного бюджета Республики Узбекистан и контроль за его исполнением; установление государственных налогов и сборов; ратификация и денонсация международных договоров; установление системы органов судебной власти; другие вопросы, отнесённые к ведению Законодательной палаты Конституцией.",
-                    chapter: "Глава XV. Олий Мажлис",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 78,
-                    title: "Статья 78",
-                    text: "К совместному ведению Законодательной палаты и Сената относится: принятие Конституции и конституционных законов; избрание Уполномоченного Олий Мажлиса по правам человека (Омбудсмана); избрание аудиторов Счётной палаты; принятие Государственной программы экономического, социального и культурного развития; ратификация и денонсация международных договоров.",
-                    chapter: "Глава XV. Олий Мажлис",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 79,
-                    title: "Статья 79",
-                    text: "К исключительному ведению Сената относится: утверждение указов Президента об образовании и упразднении министерств и других органов государственного управления; назначение и освобождение Генерального прокурора; введение чрезвычайного положения; дача согласия на назначение судей Конституционного суда, Верховного суда, Высшего административного суда и другие.",
-                    chapter: "Глава XV. Олий Мажлис",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 80,
-                    title: "Статья 80",
-                    text: "Право законодательной инициативы принадлежит депутатам Законодательной палаты, Сенату, Президенту Республики Узбекистан, Кабинету Министров, Республике Каракалпакстан в лице Жокаргы Кенеса, а также Конституционному суду, Верховному суду и Высшему административному суду по вопросам их ведения.",
-                    chapter: "Глава XV. Олий Мажлис",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 81,
-                    title: "Статья 81",
-                    text: "Законы Республики Узбекистан принимаются Законодательной палатой, одобряются Сенатом и подписываются Президентом Республики Узбекистан.",
-                    chapter: "Глава XV. Олий Мажлис",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 82,
-                    title: "Статья 82",
-                    text: "Конституция Республики Узбекистан принимается Законодательной палатой и одобряется Сенатом Олий Мажлиса квалифицированным большинством голосов или принимается на референдуме.",
-                    chapter: "Глава XV. Олий Мажлис",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 83,
-                    title: "Статья 83",
-                    text: "Члены Законодательной палаты и Сената в своей деятельности руководствуются Конституцией и законами Республики Узбекистан, обеспечивают представительство граждан в государственных органах.",
-                    chapter: "Глава XV. Олий Мажлис",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 84,
-                    title: "Статья 84",
-                    text: "Депутаты Законодательной палаты осуществляют свою деятельность на профессиональной постоянной основе. Депутаты не вправе занимать другие должности, кроме случаев, предусмотренных законом.",
-                    chapter: "Глава XV. Олий Мажлис",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 85,
-                    title: "Статья 85",
-                    text: "Депутаты Законодательной палаты и члены Сената Олий Мажлиса обладают неприкосновенностью.",
-                    chapter: "Глава XV. Олий Мажлис",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 86,
-                    title: "Статья 86",
-                    text: "Депутаты Законодательной палаты и члены Сената Олий Мажлиса вправе отказаться от дачи показаний по обстоятельствам, ставшим им известными в связи с исполнением депутатских полномочий.",
-                    chapter: "Глава XV. Олий Мажлис",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 87,
-                    title: "Статья 87",
-                    text: "Президент Республики Узбекистан является главой государства и обеспечивает согласованное функционирование и взаимодействие органов государственной власти.",
-                    chapter: "Глава XVI. Президент Республики Узбекистан",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 88,
-                    title: "Статья 88",
-                    text: "Президент Республики Узбекистан: представляет Республику Узбекистан внутри страны и в международных отношениях; обеспечивает соблюдение Конституции и законов, защиту прав и свобод граждан; выступает гарантом суверенитета и территориальной целостности Узбекистана; является Верховным Главнокомандующим Вооружёнными Силами Республики Узбекистан.",
-                    chapter: "Глава XVI. Президент Республики Узбекистан",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 89,
-                    title: "Статья 89",
-                    text: "Президент Республики Узбекистан избирается гражданами Республики Узбекистан на основе всеобщего, равного и прямого избирательного права при тайном голосовании сроком на семь лет.",
-                    chapter: "Глава XVI. Президент Республики Узбекистан",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 90,
-                    title: "Статья 90",
-                    text: "Президентом Республики Узбекистан может быть избран гражданин Республики Узбекистан не моложе тридцати пяти лет, владеющий государственным языком, постоянно проживающий на территории Узбекистана не менее десяти лет непосредственно перед выборами. Одно и то же лицо может быть Президентом Республики Узбекистан не более двух сроков подряд.",
-                    chapter: "Глава XVI. Президент Республики Узбекистан",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 91,
-                    title: "Статья 91",
-                    text: "Президент Республики Узбекистан при вступлении в должность на заседании Олий Мажлиса приносит присягу народу Узбекистана.",
-                    chapter: "Глава XVI. Президент Республики Узбекистан",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 92,
-                    title: "Статья 92",
-                    text: "Президент Республики Узбекистан: обеспечивает взаимодействие высших органов власти и управления республики; представляет Олий Мажлису кандидатуры для назначения на должности; назначает на должности Премьер-министра и министров с последующим утверждением их Олий Мажлисом; назначает и освобождает от должности дипломатических представителей; назначает иных должностных лиц; подписывает и обнародует законы; имеет право вето в отношении законов; издаёт указы и постановления.",
-                    chapter: "Глава XVI. Президент Республики Узбекистан",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 93,
-                    title: "Статья 93",
-                    text: "Президент Республики Узбекистан имеет право обращаться с посланиями к народу Узбекистана и к Олий Мажлису.",
-                    chapter: "Глава XVI. Президент Республики Узбекистан",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 94,
-                    title: "Статья 94",
-                    text: "На основании и во исполнение Конституции и законов Президент Республики Узбекистан издаёт указы, постановления и распоряжения, обязательные к исполнению на всей территории Республики Узбекистан.",
-                    chapter: "Глава XVI. Президент Республики Узбекистан",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 95,
-                    title: "Статья 95",
-                    text: "Президент Республики Узбекистан обладает неприкосновенностью. Честь и достоинство Президента охраняются законом.",
-                    chapter: "Глава XVI. Президент Республики Узбекистан",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 96,
-                    title: "Статья 96",
-                    text: "Полномочия Президента прекращаются досрочно в случае: добровольной отставки, принятой Олий Мажлисом; стойкой неспособности выполнять свои обязанности по состоянию здоровья; отрешения от должности на основании решения Конституционного суда.",
-                    chapter: "Глава XVI. Президент Республики Узбекистан",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 97,
-                    title: "Статья 97",
-                    text: "Кабинет Министров Республики Узбекистан является высшим исполнительным органом государственной власти. Кабинет Министров возглавляет Премьер-министр Республики Узбекистан.",
-                    chapter: "Глава XVII. Кабинет Министров",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 98,
-                    title: "Статья 98",
-                    text: "Кабинет Министров Республики Узбекистан: руководит эффективным функционированием экономики, социальной и духовной сферы; принимает решения по организации исполнения законов Республики Узбекистан, решений Олий Мажлиса, указов, постановлений и распоряжений Президента; координирует деятельность министерств и ведомств; разрабатывает Государственный бюджет и представляет его в Олий Мажлис; обеспечивает укрепление денежной и кредитной системы.",
-                    chapter: "Глава XVII. Кабинет Министров",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 99,
-                    title: "Статья 99",
-                    text: "Кабинет Министров принимает постановления и распоряжения, обязательные к исполнению на всей территории Республики Узбекистан. Постановления и распоряжения Кабинета Министров не должны противоречить Конституции и законам.",
-                    chapter: "Глава XVII. Кабинет Министров",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 100,
-                    title: "Статья 100",
-                    text: "Премьер-министр Республики Узбекистан руководит деятельностью Кабинета Министров, несёт персональную ответственность за его работу перед Президентом и Олий Мажлисом.",
-                    chapter: "Глава XVII. Кабинет Министров",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 101,
-                    title: "Статья 101",
-                    text: "Кабинет Министров слагает свои полномочия перед вновь избранным Президентом Республики Узбекистан.",
-                    chapter: "Глава XVII. Кабинет Министров",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 102,
-                    title: "Статья 102",
-                    text: "Судебная власть в Республике Узбекистан действует независимо от законодательной и исполнительной власти, политических партий и других общественных объединений.",
-                    chapter: "Глава XVIII. Основы судоустройства",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 103,
-                    title: "Статья 103",
-                    text: "Судьи независимы, подчиняются только закону. Какое-либо вмешательство в деятельность судей по отправлению правосудия недопустимо и влечёт ответственность по закону.",
-                    chapter: "Глава XVIII. Основы судоустройства",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 104,
-                    title: "Статья 104",
-                    text: "Судьи несменяемы на срок своих полномочий. Полномочия судей могут быть прекращены лишь в случаях, установленных законом.",
-                    chapter: "Глава XVIII. Основы судоустройства",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 105,
-                    title: "Статья 105",
-                    text: "Судьи не вправе заниматься предпринимательской деятельностью, входить в состав руководящих органов или наблюдательных советов коммерческих организаций.",
-                    chapter: "Глава XVIII. Основы судоустройства",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 106,
-                    title: "Статья 106",
-                    text: "Разбирательство дел во всех судах открытое. Закрытое судебное разбирательство допускается лишь в случаях, установленных законом.",
-                    chapter: "Глава XVIII. Основы судоустройства",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 107,
-                    title: "Статья 107",
-                    text: "Конституционный суд Республики Узбекистан осуществляет надзор за соответствием нормативно-правовых актов Конституции. Заключение Конституционного суда является окончательным.",
-                    chapter: "Глава XVIII. Основы судоустройства",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 108,
-                    title: "Статья 108",
-                    text: "Верховный суд Республики Узбекистан является высшим судебным органом по гражданским, уголовным, административным и иным делам, осуществляет надзор за судебной деятельностью судов. Верховный суд Республики Узбекистан даёт разъяснения по вопросам судебной практики.",
-                    chapter: "Глава XVIII. Основы судоустройства",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 109,
-                    title: "Статья 109",
-                    text: "Высший административный суд Республики Узбекистан является высшим судебным органом по экономическим делам.",
-                    chapter: "Глава XVIII. Основы судоустройства",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 110,
-                    title: "Статья 110",
-                    text: "В Республике Узбекистан действует прокуратура — самостоятельный государственный орган, осуществляющий надзор за точным и единообразным исполнением законов на всей территории страны.",
-                    chapter: "Глава XIX. Прокуратура",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 111,
-                    title: "Статья 111",
-                    text: "Генеральный прокурор Республики Узбекистан и подчинённые ему прокуроры осуществляют надзор за исполнением законов органами дознания и предварительного следствия, соответствием законодательству постановлений органов управления.",
-                    chapter: "Глава XIX. Прокуратура",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 112,
-                    title: "Статья 112",
-                    text: "Генеральный прокурор Республики Узбекистан назначается на должность Президентом с согласия Сената Олий Мажлиса и подотчётен Президенту.",
-                    chapter: "Глава XIX. Прокуратура",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 113,
-                    title: "Статья 113",
-                    text: "Финансовый контроль в Республике Узбекистан осуществляется Счётной палатой. Счётная палата подотчётна Олий Мажлису.",
-                    chapter: "Глава XIX. Прокуратура",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 114,
-                    title: "Статья 114",
-                    text: "Уполномоченный Олий Мажлиса по правам человека (Омбудсман) осуществляет парламентский контроль за соблюдением прав и свобод граждан государственными органами и должностными лицами.",
-                    chapter: "Глава XIX. Прокуратура",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                {
-                    id: 115,
-                    title: "Статья 115",
-                    text: "Центральный банк Республики Узбекистан является государственным органом, осуществляющим эмиссию денежных знаков и проводящим единую денежно-кредитную политику. Центральный банк подотчётен Олий Мажлису.",
-                    chapter: "Глава XIX. Прокуратура",
-                    section: "Раздел пятый. Организация государственной власти",
-                },
-                // РАЗДЕЛ ШЕСТОЙ: РЕСПУБЛИКА КАРАКАЛПАКСТАН
-                {
-                    id: 116,
-                    title: "Статья 116",
-                    text: "Республика Каракалпакстан — суверенная демократическая республика в составе Республики Узбекистан. Суверенитет Республики Каракалпакстан охраняется Республикой Узбекистан.",
-                    chapter: "Глава XX. Статус Республики Каракалпакстан",
-                    section: "Раздел шестой. Республика Каракалпакстан",
-                },
-                {
-                    id: 117,
-                    title: "Статья 117",
-                    text: "Республика Каракалпакстан обладает собственной конституцией. Конституция Республики Каракалпакстан не может противоречить Конституции Республики Узбекистан.",
-                    chapter: "Глава XX. Статус Республики Каракалпакстан",
-                    section: "Раздел шестой. Республика Каракалпакстан",
-                },
-                {
-                    id: 118,
-                    title: "Статья 118",
-                    text: "Законы Республики Узбекистан обязательны на территории Республики Каракалпакстан.",
-                    chapter: "Глава XX. Статус Республики Каракалпакстан",
-                    section: "Раздел шестой. Республика Каракалпакстан",
-                },
-                {
-                    id: 119,
-                    title: "Статья 119",
-                    text: "Республика Каракалпакстан вправе выйти из состава Республики Узбекистан на основании всеобщего референдума народа Каракалпакстана.",
-                    chapter: "Глава XX. Статус Республики Каракалпакстан",
-                    section: "Раздел шестой. Республика Каракалпакстан",
-                },
-                {
-                    id: 120,
-                    title: "Статья 120",
-                    text: "Высшим государственным органом Республики Каракалпакстан является Жокаргы Кенес Республики Каракалпакстан. Жокаргы Кенес избирается гражданами Республики Каракалпакстан.",
-                    chapter: "Глава XX. Статус Республики Каракалпакстан",
-                    section: "Раздел шестой. Республика Каракалпакстан",
-                },
-                {
-                    id: 121,
-                    title: "Статья 121",
-                    text: "Законодательную власть Республики Каракалпакстан осуществляет Жокаргы Кенес. Исполнительную власть в Республике Каракалпакстан осуществляет Совет Министров.",
-                    chapter: "Глава XX. Статус Республики Каракалпакстан",
-                    section: "Раздел шестой. Республика Каракалпакстан",
-                },
-                {
-                    id: 122,
-                    title: "Статья 122",
-                    text: "Суды Республики Каракалпакстан действуют в соответствии с законодательством Республики Узбекистан.",
-                    chapter: "Глава XX. Статус Республики Каракалпакстан",
-                    section: "Раздел шестой. Республика Каракалпакстан",
-                },
-                // РАЗДЕЛ СЕДЬМОЙ: МЕСТНЫЕ ОРГАНЫ ГОСУДАРСТВЕННОЙ ВЛАСТИ И САМОУПРАВЛЕНИЯ
-                {
-                    id: 123,
-                    title: "Статья 123",
-                    text: "В областях, районах и городах действуют представительные органы государственной власти — Кенгаши народных депутатов. Областной, районный и городской Кенгаши народных депутатов избираются гражданами соответствующей административно-территориальной единицы.",
-                    chapter: "Глава XXI. Местные органы государственной власти",
-                    section:
-                        "Раздел седьмой. Местные органы государственной власти и самоуправления",
-                },
-                {
-                    id: 124,
-                    title: "Статья 124",
-                    text: "Областным, районным и городским Кенгашам народных депутатов подотчётны и подконтрольны хокимы соответствующих административно-территориальных единиц.",
-                    chapter: "Глава XXI. Местные органы государственной власти",
-                    section:
-                        "Раздел седьмой. Местные органы государственной власти и самоуправления",
-                },
-                {
-                    id: 125,
-                    title: "Статья 125",
-                    text: "Хоким является единоначальным исполнительным органом власти в области, районе и городе. Хоким назначается и освобождается от должности Президентом Республики Узбекистан.",
-                    chapter: "Глава XXI. Местные органы государственной власти",
-                    section:
-                        "Раздел седьмой. Местные органы государственной власти и самоуправления",
-                },
-                {
-                    id: 126,
-                    title: "Статья 126",
-                    text: "Хоким принимает решения и распоряжения, обязательные для исполнения на территории соответствующей административно-территориальной единицы.",
-                    chapter: "Глава XXI. Местные органы государственной власти",
-                    section:
-                        "Раздел седьмой. Местные органы государственной власти и самоуправления",
-                },
-                {
-                    id: 127,
-                    title: "Статья 127",
-                    text: "Законом могут быть определены вопросы, отнесённые к компетенции хокима с правом единоличного принятия решений. Хокимы несут ответственность за состояние экономического и социального развития соответствующих территорий.",
-                    chapter: "Глава XXI. Местные органы государственной власти",
-                    section:
-                        "Раздел седьмой. Местные органы государственной власти и самоуправления",
-                },
-                {
-                    id: 128,
-                    title: "Статья 128",
-                    text: "Гражданское самоуправление осуществляется посредством схода граждан и его органов, других форм прямой демократии в интересах жителей.",
-                    chapter: "Глава XXII. Органы самоуправления граждан",
-                    section:
-                        "Раздел седьмой. Местные органы государственной власти и самоуправления",
-                },
-                {
-                    id: 129,
-                    title: "Статья 129",
-                    text: "Местные бюджеты формируются из доходов, направляемых в местные бюджеты, и дотаций из государственного бюджета. Районный и городской хокимияты несут ответственность перед соответствующими Кенгашами за исполнение местного бюджета.",
-                    chapter: "Глава XXII. Органы самоуправления граждан",
-                    section:
-                        "Раздел седьмой. Местные органы государственной власти и самоуправления",
-                },
-                // РАЗДЕЛ ВОСЬМОЙ: ЧРЕЗВЫЧАЙНОЕ ПОЛОЖЕНИЕ
-                {
-                    id: 130,
-                    title: "Статья 130",
-                    text: "Чрезвычайное положение на территории Республики Узбекистан или в отдельных её местностях вводится указом Президента с последующим незамедлительным представлением в Олий Мажлис.",
-                    chapter: "Глава XXIII. Чрезвычайное положение",
-                    section: "Раздел восьмой. Чрезвычайное положение",
-                },
-                {
-                    id: 131,
-                    title: "Статья 131",
-                    text: "В период чрезвычайного положения не допускается изменение Конституции, а также законодательства о выборах. Проведение выборов и референдумов в условиях чрезвычайного положения не допускается.",
-                    chapter: "Глава XXIII. Чрезвычайное положение",
-                    section: "Раздел восьмой. Чрезвычайное положение",
-                },
-                // РАЗДЕЛ ДЕВЯТЫЙ: ПОРЯДОК ИЗМЕНЕНИЯ КОНСТИТУЦИИ
-                {
-                    id: 132,
-                    title: "Статья 132",
-                    text: "Предложения о внесении изменений и дополнений в Конституцию Республики Узбекистан могут вноситься Президентом Республики Узбекистан, Жокаргы Кенесом Республики Каракалпакстан или не менее чем одной третью членов Законодательной палаты или Сената Олий Мажлиса.",
-                    chapter: "Глава XXIV. Порядок изменения Конституции",
-                    section: "Раздел девятый. Порядок изменения Конституции",
-                },
-                {
-                    id: 133,
-                    title: "Статья 133",
-                    text: "Конституция Республики Узбекистан, конституционные законы принимаются квалифицированным большинством (не менее двух третей) голосов от общего числа членов Законодательной палаты и Сената Олий Мажлиса либо на референдуме.",
-                    chapter: "Глава XXIV. Порядок изменения Конституции",
-                    section: "Раздел девятый. Порядок изменения Конституции",
-                },
-                // РАЗДЕЛ ДЕСЯТЫЙ: ЗАКЛЮЧИТЕЛЬНЫЕ ПОЛОЖЕНИЯ
-                {
-                    id: 134,
-                    title: "Статья 134",
-                    text: "Конституция Республики Узбекистан вступает в силу с момента её принятия на всенародном голосовании. Настоящая Конституция обязательна для исполнения всеми государственными органами, гражданами и другими лицами, находящимися на её территории.",
-                    chapter: "Глава XXV. Заключительные положения",
-                    section: "Раздел десятый. Заключительные положения",
-                },
-                {
-                    id: 135,
-                    title: "Статья 135",
-                    text: "Законы и другие нормативные акты, принятые до введения в действие настоящей Конституции, применяются в части, не противоречащей Конституции.",
-                    chapter: "Глава XXV. Заключительные положения",
-                    section: "Раздел десятый. Заключительные положения",
-                },
-                {
-                    id: 136,
-                    title: "Статья 136",
-                    text: "Органы государственной власти, сформированные или избранные до введения в действие настоящей Конституции, сохраняют свои полномочия до окончания установленного ранее срока.",
-                    chapter: "Глава XXV. Заключительные положения",
-                    section: "Раздел десятый. Заключительные положения",
-                },
-                {
-                    id: 137,
-                    title: "Статья 137",
-                    text: "Международные договоры и соглашения, ратифицированные Республикой Узбекистан до принятия настоящей Конституции, сохраняют силу.",
-                    chapter: "Глава XXV. Заключительные положения",
-                    section: "Раздел десятый. Заключительные положения",
-                },
-                {
-                    id: 138,
-                    title: "Статья 138",
-                    text: "Права и обязанности, установленные государственными органами до введения в действие настоящей Конституции, действительны в той мере, в какой они не противоречат настоящей Конституции.",
-                    chapter: "Глава XXV. Заключительные положения",
-                    section: "Раздел десятый. Заключительные положения",
-                },
-                {
-                    id: 139,
-                    title: "Статья 139",
-                    text: "Государственные органы, суды и должностные лица обязаны в установленный законом срок привести нормативные акты и практику деятельности в соответствие с настоящей Конституцией.",
-                    chapter: "Глава XXV. Заключительные положения",
-                    section: "Раздел десятый. Заключительные положения",
-                },
-                {
-                    id: 140,
-                    title: "Статья 140",
-                    text: "Государство признаёт и гарантирует принципы гуманности, социальной справедливости, народовластия и верховенства закона как основополагающие ценности, обязательные к соблюдению всеми государственными органами и гражданами.",
-                    chapter: "Глава XXV. Заключительные положения",
-                    section: "Раздел десятый. Заключительные положения",
-                },
-                {
-                    id: 141,
-                    title: "Статья 141",
-                    text: "Государство реализует политику по укреплению общественного порядка и безопасности, обеспечению прав граждан и стабильности на всей территории Республики Узбекистан.",
-                    chapter: "Глава XXV. Заключительные положения",
-                    section: "Раздел десятый. Заключительные положения",
-                },
-                {
-                    id: 142,
-                    title: "Статья 142",
-                    text: "Государство обеспечивает системное взаимодействие органов государственного управления в целях повышения эффективности управленческих решений, устранения коррупции, защиты прав граждан и эффективного использования государственных ресурсов.",
-                    chapter: "Глава XXV. Заключительные положения",
-                    section: "Раздел десятый. Заключительные положения",
-                },
-                {
-                    id: 143,
-                    title: "Статья 143",
-                    text: "Государство придаёт первостепенное значение образованию и науке как основе инновационного развития, формирования нравственной личности и конкурентоспособного общества.",
-                    chapter: "Глава XXV. Заключительные положения",
-                    section: "Раздел десятый. Заключительные положения",
-                },
-                {
-                    id: 144,
-                    title: "Статья 144",
-                    text: "Государство создаёт условия для устойчивого развития экономики, обеспечения занятости населения, повышения жизненного уровня граждан и снижения уровня бедности.",
-                    chapter: "Глава XXV. Заключительные положения",
-                    section: "Раздел десятый. Заключительные положения",
-                },
-                {
-                    id: 145,
-                    title: "Статья 145",
-                    text: "Государство обеспечивает гражданам доступ к правосудию, правовой помощи и соблюдение принципа равенства перед судом.",
-                    chapter: "Глава XXV. Заключительные положения",
-                    section: "Раздел десятый. Заключительные положения",
-                },
-                {
-                    id: 146,
-                    title: "Статья 146",
-                    text: "Государство принимает меры по предотвращению и устранению последствий природных и техногенных катастроф, по защите граждан и окружающей среды.",
-                    chapter: "Глава XXV. Заключительные положения",
-                    section: "Раздел десятый. Заключительные положения",
-                },
-                {
-                    id: 147,
-                    title: "Статья 147",
-                    text: "Органы государственного управления обязаны создавать условия для повышения правовой культуры граждан, предоставлять полную информацию о принятых решениях и изменениях в законодательстве.",
-                    chapter: "Глава XXV. Заключительные положения",
-                    section: "Раздел десятый. Заключительные положения",
-                },
-                {
-                    id: 148,
-                    title: "Статья 148",
-                    text: "Государство реализует политику цифровой трансформации экономики и государственного управления, создаёт условия для развития информационных технологий и обеспечения информационной безопасности.",
-                    chapter: "Глава XXV. Заключительные положения",
-                    section: "Раздел десятый. Заключительные положения",
-                },
-                {
-                    id: 149,
-                    title: "Статья 149",
-                    text: "Государство содействует развитию международного сотрудничества, вступлению в международные организации, партнёрству с иностранными государствами в целях обеспечения устойчивого развития и безопасности.",
-                    chapter: "Глава XXV. Заключительные положения",
-                    section: "Раздел десятый. Заключительные положения",
-                },
-                {
-                    id: 150,
-                    title: "Статья 150",
-                    text: "Государство поддерживает и развивает институты гражданского общества, обеспечивает условия для участия граждан в решении вопросов государственного и общественного значения.",
-                    chapter: "Глава XXV. Заключительные положения",
-                    section: "Раздел десятый. Заключительные положения",
-                },
-                {
-                    id: 151,
-                    title: "Статья 151",
-                    text: "Государство признаёт роль частного предпринимательства как движущей силы экономики, обеспечивает свободу хозяйственной деятельности в рамках закона, создаёт условия для поддержки малого и среднего бизнеса.",
-                    chapter: "Глава XXV. Заключительные положения",
-                    section: "Раздел десятый. Заключительные положения",
-                },
-                {
-                    id: 152,
-                    title: "Статья 152",
-                    text: "Государство обеспечивает неприкосновенность частной собственности, защищает собственников от незаконных посягательств и создаёт правовые механизмы защиты имущественных прав граждан и юридических лиц.",
-                    chapter: "Глава XXV. Заключительные положения",
-                    section: "Раздел десятый. Заключительные положения",
-                },
-                {
-                    id: 153,
-                    title: "Статья 153",
-                    text: "Государство гарантирует гражданам возможность бесплатного обращения к уполномоченным органам за защитой своих нарушенных прав, проведения независимой проверки их обращений.",
-                    chapter: "Глава XXV. Заключительные положения",
-                    section: "Раздел десятый. Заключительные положения",
-                },
-                {
-                    id: 154,
-                    title: "Статья 154",
-                    text: "Государство признаёт международные стандарты в области прав человека и стремится к их полному соблюдению на территории Республики Узбекистан.",
-                    chapter: "Глава XXV. Заключительные положения",
-                    section: "Раздел десятый. Заключительные положения",
-                },
-                {
-                    id: 155,
-                    title: "Статья 155",
-                    text: "Настоящая Конституция принята 30 апреля 2023 года на всенародном референдуме и вступила в силу со дня её официального опубликования. Конституция Республики Узбекистан 1992 года утрачивает силу с момента введения в действие настоящей Конституции.",
-                    chapter: "Глава XXV. Заключительные положения",
-                    section: "Раздел десятый. Заключительные положения",
-                },
-            ];
+function highlight(text, query) {
+  if (!query) return text;
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return text.replace(new RegExp(`(${escaped})`, 'gi'), '<mark>$1</mark>');
+}
 
-            // ============================================================
-            // STATE
-            // ============================================================
-            let currentTab = "search";
-            let favorites = JSON.parse(
-                localStorage.getItem("uz_const_fav") || "[]",
-            );
-            let currentModalId = null;
-            let searchQuery = "";
-            let chapterViewActive = false;
+function matches(item, query, filter) {
+  const q = query.toLowerCase().trim();
+  
+  // Filter logic
+  if (filter === 'chapter' && item.type !== 'chapter') return false;
+  if (filter === 'article' && item.type !== 'article') return false;
+  if (filter === 'rights' && item.type === 'article') {
+    if (!item.tags.some(t => filterTags.rights.some(f => t.includes(f)))) return false;
+  }
+  if (filter === 'economy' && item.type === 'article') {
+    if (!item.tags.some(t => filterTags.economy.some(f => t.includes(f)))) return false;
+  }
+  if (filter === 'duties' && item.type === 'article') {
+    if (!item.tags.some(t => filterTags.duties.some(f => t.includes(f)))) return false;
+  }
+  if (['rights','economy','duties'].includes(filter) && item.type === 'chapter') return false;
 
-            // ============================================================
-            // UTILS
-            // ============================================================
-            function escapeRegex(s) {
-                return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-            }
+  if (!q) return true;
 
-            function highlight(text, query) {
-                if (!query || query.trim() === "") return escapeHtml(text);
-                const words = query
-                    .trim()
-                    .split(/\s+/)
-                    .filter((w) => w.length > 0);
-                let escaped = escapeHtml(text);
-                words.forEach((word) => {
-                    const re = new RegExp(
-                        "(" + escapeRegex(escapeHtml(word)) + ")",
-                        "gi",
-                    );
-                    escaped = escaped.replace(re, "<mark>$1</mark>");
-                });
-                return escaped;
-            }
+  // Number search: "статья 25", "ст. 25", "25", "глава III", "глава 2"
+  const numMatch = q.match(/^(?:ст(?:атья)?\.?\s*)?(\d+)$/i);
+  const chapterMatch = q.match(/^(?:глава\s+)?([ivxlcdm]+|\d+)$/i);
 
-            function escapeHtml(s) {
-                return s
-                    .replace(/&/g, "&amp;")
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;");
-            }
+  if (numMatch && item.type === 'article') {
+    return item.num === parseInt(numMatch[1]);
+  }
+  if (chapterMatch && item.type === 'chapter') {
+    const cn = chapterMatch[1].toUpperCase();
+    return item.num === cn || romanToArab(item.num) === parseInt(cn);
+  }
 
-            function isFav(id) {
-                return favorites.includes(id);
-            }
+  // Text search
+  const searchable = [
+    item.title || '',
+    item.summary || '',
+    item.full || '',
+    (item.tags || []).join(' '),
+    item.type === 'article' ? `статья ${item.num}` : `глава ${item.num}`,
+  ].join(' ').toLowerCase();
 
-            function toggleFav(id) {
-                const idx = favorites.indexOf(id);
-                if (idx === -1) favorites.push(id);
-                else favorites.splice(idx, 1);
-                localStorage.setItem("uz_const_fav", JSON.stringify(favorites));
-                updateFavBadge();
-            }
+  return searchable.includes(q);
+}
 
-            function updateFavBadge() {
-                const badge = document.getElementById("favBadge");
-                if (favorites.length > 0) {
-                    badge.textContent = favorites.length;
-                    badge.style.display = "block";
-                } else {
-                    badge.style.display = "none";
-                }
-                if (currentTab === "favorites") renderFavorites();
-            }
+function romanToArab(r) {
+  const map = {I:1,V:5,X:10,L:50,C:100,D:500,M:1000};
+  let n = 0;
+  for (let i=0; i<r.length; i++) {
+    const cur = map[r[i]], next = map[r[i+1]];
+    n += next && cur < next ? -cur : cur;
+  }
+  return n;
+}
 
-            // ============================================================
-            // ARTICLE CARD
-            // ============================================================
-            function renderCard(art, query = "") {
-                const fav = isFav(art.id);
-                const titleH = highlight(art.title, query);
-                const metaH = highlight(
-                    art.chapter.split(".")[1]?.trim() || art.chapter,
-                    query,
-                );
-                const textH = highlight(art.text, query);
-                return `
-    <div class="article-card" id="card-${art.id}">
-      <div class="article-card-header">
-        <span class="article-number">${titleH}</span>
-        <span class="article-meta">${highlight(art.section.split(".")[1]?.trim() || art.section, query)}<br>${metaH}</span>
-      </div>
-      <div class="article-text-preview" onclick="openModal(${art.id})">${textH}</div>
-      <div style="display:flex;justify-content:flex-end;padding:0 12px 10px;gap:10px;align-items:center">
-        <button style="background:none;border:1.5px solid var(--border);border-radius:8px;padding:5px 12px;font-size:12px;color:var(--accent);cursor:pointer;font-family:inherit" onclick="openModal(${art.id})">Читать полностью →</button>
-        <button class="fav-btn ${fav ? "active" : ""}" onclick="handleFavClick(event,${art.id})" title="Добавить в избранное">${fav ? "❤️" : "🤍"}</button>
-      </div>
-    </div>`;
-            }
+function render(query) {
+  const results = document.getElementById('results');
+  const stats = document.getElementById('stats');
+  const q = query.toLowerCase().trim();
 
-            function handleFavClick(e, id) {
-                e.stopPropagation();
-                toggleFav(id);
-                const btn = e.currentTarget;
-                const isFavNow = isFav(id);
-                btn.textContent = isFavNow ? "❤️" : "🤍";
-                btn.classList.toggle("active", isFavNow);
-                if (currentModalId === id) {
-                    const mBtn = document.getElementById("modalFavBtn");
-                    if (mBtn) {
-                        mBtn.textContent = isFavNow
-                            ? "❤️ В избранном"
-                            : "❤️ Избранное";
-                        mBtn.classList.toggle("active", isFavNow);
-                    }
-                }
-                if (currentTab === "favorites") renderFavorites();
-            }
+  const filtered = data.filter(item => matches(item, query, activeFilter));
+  
+  // Count only articles for stats
+  const articleCount = filtered.filter(i => i.type === 'article').length;
 
-            // ============================================================
-            // SEARCH
-            // ============================================================
-            const searchInput = document.getElementById("searchInput");
-            const clearBtn = document.getElementById("clearBtn");
-            const searchResults = document.getElementById("searchResults");
-            const resultsInfo = document.getElementById("resultsInfo");
+  if (filtered.length === 0) {
+    results.innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>Ничего не найдено по запросу «${query}»</p></div>`;
+    stats.textContent = '';
+    return;
+  }
 
-            searchInput.addEventListener("input", () => {
-                searchQuery = searchInput.value;
-                clearBtn.classList.toggle("visible", searchQuery.length > 0);
-                doSearch();
-            });
+  stats.textContent = articleCount > 0 ? `Найдено статей: ${articleCount}` : '';
 
-            clearBtn.addEventListener("click", () => {
-                searchInput.value = "";
-                searchQuery = "";
-                clearBtn.classList.remove("visible");
-                doSearch();
-                searchInput.focus();
-            });
+  let html = '';
+  let lastChapter = null;
 
-            function doSearch() {
-                const q = searchQuery.trim().toLowerCase();
-                let results;
+  // Group articles under chapters
+  const articles = filtered.filter(i => i.type === 'article');
+  const chapters = filtered.filter(i => i.type === 'chapter');
 
-                if (!q) {
-                    results = constitution;
-                    resultsInfo.textContent = `Все статьи · ${constitution.length}`;
-                } else {
-                    const numMatch = q.match(/^\d+$/);
-                    if (numMatch) {
-                        const num = parseInt(q);
-                        const exact = constitution.filter((a) => a.id === num);
-                        const partial = constitution.filter(
-                            (a) => a.id !== num && String(a.id).includes(q),
-                        );
-                        results = [...exact, ...partial];
-                    } else {
-                        results = constitution.filter(
-                            (a) =>
-                                a.text.toLowerCase().includes(q) ||
-                                a.title.toLowerCase().includes(q) ||
-                                a.chapter.toLowerCase().includes(q) ||
-                                a.section.toLowerCase().includes(q),
-                        );
-                    }
-                    resultsInfo.textContent =
-                        results.length > 0
-                            ? `Найдено: ${results.length} статей`
-                            : "";
-                }
-
-                if (results.length === 0) {
-                    searchResults.innerHTML = `
-      <div class="empty-state">
-        <div class="icon">🔎</div>
-        <h3>Ничего не нашлось</h3>
-        <p>Попробуйте другие слова или введите номер статьи (например, <strong>94</strong>)</p>
+  if (activeFilter === 'chapter') {
+    chapters.forEach(ch => {
+      html += `<div class="chapter-header">
+        <div class="ch-num">Глава ${ch.num}</div>
+        <div class="ch-title">${highlight(ch.title, q)}</div>
       </div>`;
-                    return;
-                }
+    });
+  } else if (activeFilter === 'article') {
+    articles.forEach(art => {
+      html += renderArticle(art, q);
+    });
+  } else {
+    // Show chapters with their articles
+    let processedChapters = new Set();
+    filtered.forEach(item => {
+      if (item.type === 'chapter') {
+        processedChapters.add(item.num);
+        html += `<div class="chapter-header">
+          <div class="ch-num">Глава ${item.num}</div>
+          <div class="ch-title">${highlight(item.title, q)}</div>
+        </div>`;
+        // Show articles of this chapter if searching
+        if (q) {
+          articles.filter(a => a.chapter === item.num).forEach(art => {
+            html += renderArticle(art, q);
+          });
+        }
+      } else if (item.type === 'article') {
+        // Add chapter header if not shown
+        const ch = data.find(d => d.type === 'chapter' && d.num === item.chapter);
+        if (ch && !processedChapters.has(ch.num) && !filtered.find(f => f.type === 'chapter' && f.num === ch.num)) {
+          processedChapters.add(ch.num);
+          html += `<div class="chapter-header">
+            <div class="ch-num">Глава ${ch.num}</div>
+            <div class="ch-title">${ch.title}</div>
+          </div>`;
+        }
+        html += renderArticle(art, q);
+      }
+    });
+  }
 
-                searchResults.innerHTML = results
-                    .map((a) => renderCard(a, searchQuery))
-                    .join("");
-            }
+  results.innerHTML = html;
 
-            // ============================================================
-            // TABLE OF CONTENTS
-            // ============================================================
-            function buildTOC() {
-                const tocView = document.getElementById("tocView");
-                // Group by section then chapter
-                const sections = {};
-                constitution.forEach((a) => {
-                    if (!sections[a.section]) sections[a.section] = {};
-                    if (!sections[a.section][a.chapter])
-                        sections[a.section][a.chapter] = [];
-                    sections[a.section][a.chapter].push(a);
-                });
+  // Re-attach toggle events
+  results.querySelectorAll('.article-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const id = card.dataset.id;
+      if (expandedCards.has(id)) {
+        expandedCards.delete(id);
+        card.classList.remove('expanded');
+      } else {
+        expandedCards.add(id);
+        card.classList.add('expanded');
+      }
+    });
+    if (expandedCards.has(card.dataset.id)) {
+      card.classList.add('expanded');
+    }
+  });
+}
 
-                let html = "";
-                Object.entries(sections).forEach(([sec, chapters]) => {
-                    html += `<div class="toc-section-title">${sec.split(".").slice(1).join(".").trim() || sec}</div>`;
-                    Object.entries(chapters).forEach(([chap, arts]) => {
-                        const chapShort =
-                            chap.split(".").slice(1).join(".").trim() || chap;
-                        html += `<div class="toc-chapter-item" onclick="showChapter('${encodeURIComponent(chap)}')">
-        <div class="toc-chapter-info">
-          <div class="toc-chapter-name">${chapShort}</div>
-          <div class="toc-chapter-count">${arts.length} ${arts.length === 1 ? "статья" : arts.length < 5 ? "статьи" : "статей"} · ${arts[0].title} – ${arts[arts.length - 1].title}</div>
-        </div>
-        <span class="toc-chevron">›</span>
-      </div>`;
-                    });
-                });
-                tocView.innerHTML = html;
-            }
-
-            function showChapter(encodedChap) {
-                const chap = decodeURIComponent(encodedChap);
-                const arts = constitution.filter((a) => a.chapter === chap);
-                const chapShort =
-                    chap.split(".").slice(1).join(".").trim() || chap;
-                const chapterView = document.getElementById("chapterView");
-                const tocView = document.getElementById("tocView");
-
-                chapterView.innerHTML = `
-    <div class="chapter-view-header">
-      <button class="back-btn" onclick="hideChapter()">‹ Назад</button>
-      <div class="chapter-view-title">${escapeHtml(chapShort)}</div>
+function renderArticle(art, q) {
+  const id = `art-${art.num}`;
+  return `<div class="article-card" data-id="${id}">
+    <div class="article-top">
+      <span class="art-num">Ст. ${art.num}</span>
+      <span class="art-summary">${highlight(art.summary, q)}</span>
+      <span class="art-toggle">▼</span>
     </div>
-    <div id="chapterArticles">${arts.map((a) => renderCard(a, "")).join("")}</div>
-  `;
+    <div class="art-full">${highlight(art.full, q)}</div>
+  </div>`;
+}
 
-                tocView.style.display = "none";
-                chapterView.style.display = "block";
-                document.getElementById("mainContent").scrollTop = 0;
-                chapterViewActive = true;
-            }
+// Init
+const input = document.getElementById('searchInput');
+const clearBtn = document.getElementById('clearBtn');
 
-            function hideChapter() {
-                document.getElementById("tocView").style.display = "block";
-                document.getElementById("chapterView").style.display = "none";
-                chapterViewActive = false;
-            }
+input.addEventListener('input', () => {
+  clearBtn.style.display = input.value ? 'block' : 'none';
+  render(input.value);
+});
 
-            // ============================================================
-            // FAVORITES
-            // ============================================================
-            function renderFavorites() {
-                const favView = document.getElementById("favView");
-                if (favorites.length === 0) {
-                    favView.innerHTML = `
-      <div class="fav-empty">
-        <div style="font-size:56px;opacity:.3">🤍</div>
-        <h3 style="font-size:17px;font-weight:600;color:var(--text)">Нет избранных статей</h3>
-        <p style="font-size:14px;color:var(--text-secondary);max-width:230px;line-height:1.5;text-align:center">Нажмите на 🤍 рядом с любой статьёй, чтобы добавить её сюда</p>
-      </div>`;
-                    return;
-                }
-                const favArts = favorites
-                    .map((id) => constitution.find((a) => a.id === id))
-                    .filter(Boolean);
-                favView.innerHTML = `
-    <div style="padding:16px 16px 4px;font-size:13px;color:var(--text-secondary)">${favArts.length} статей в избранном</div>
-    ${favArts.map((a) => renderCard(a, "")).join("")}`;
-            }
+clearBtn.addEventListener('click', () => {
+  input.value = '';
+  clearBtn.style.display = 'none';
+  render('');
+  input.focus();
+});
 
-            // ============================================================
-            // MODAL
-            // ============================================================
-            function openModal(id) {
-                const art = constitution.find((a) => a.id === id);
-                if (!art) return;
-                currentModalId = id;
-                const fav = isFav(id);
-                document.getElementById("modalTitle").textContent = art.title;
-                document.getElementById("modalMeta").textContent =
-                    art.chapter + " · " + art.section;
-                document.getElementById("modalText").innerHTML = escapeHtml(
-                    art.text,
-                );
-                const mBtn = document.getElementById("modalFavBtn");
-                mBtn.textContent = fav ? "❤️ В избранном" : "❤️ Избранное";
-                mBtn.classList.toggle("active", fav);
-                document.getElementById("modalOverlay").classList.add("open");
-                document.body.style.overflow = "hidden";
-            }
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    render(input.value);
+  });
+});
 
-            function closeModal(e) {
-                if (e.target === document.getElementById("modalOverlay"))
-                    closeModalDirect();
-            }
-
-            function closeModalDirect() {
-                document
-                    .getElementById("modalOverlay")
-                    .classList.remove("open");
-                document.body.style.overflow = "";
-                currentModalId = null;
-            }
-
-            function toggleFavModal() {
-                if (!currentModalId) return;
-                toggleFav(currentModalId);
-                const fav = isFav(currentModalId);
-                const mBtn = document.getElementById("modalFavBtn");
-                mBtn.textContent = fav ? "❤️ В избранном" : "❤️ Избранное";
-                mBtn.classList.toggle("active", fav);
-                // Update card if visible
-                const btn = document.querySelector(
-                    `#card-${currentModalId} .fav-btn`,
-                );
-                if (btn) {
-                    btn.textContent = fav ? "❤️" : "🤍";
-                    btn.classList.toggle("active", fav);
-                }
-            }
-
-            // ============================================================
-            // TAB SWITCHING
-            // ============================================================
-            function switchTab(tab) {
-                currentTab = tab;
-                document
-                    .querySelectorAll(".tab-pane")
-                    .forEach((p) => p.classList.remove("active"));
-                document
-                    .querySelectorAll(".nav-btn")
-                    .forEach((b) => b.classList.remove("active"));
-                document.getElementById("tab-" + tab).classList.add("active");
-                document
-                    .getElementById(
-                        "nav" + tab.charAt(0).toUpperCase() + tab.slice(1),
-                    )
-                    .classList.add("active");
-                document.getElementById("mainContent").scrollTop = 0;
-                if (tab === "favorites") renderFavorites();
-                if (tab === "search")
-                    setTimeout(() => {
-                        /* keep scroll */
-                    }, 0);
-            }
-
-            // ============================================================
-            // INIT
-            // ============================================================
-            doSearch();
-            buildTOC();
-            updateFavBadge();
-        </script>
-
-        <!-- FAV BADGE -->
-        <script>
-            // Add badge HTML to nav fav button after DOM ready
-            document
-                .getElementById("navFavorites")
-                .insertAdjacentHTML(
-                    "afterbegin",
-                    '<span class="count-badge" id="favBadge" style="display:none">0</span>',
-                );
-            updateFavBadge();
-        </script>
-    </body>
+render('');
+</script>
+</body>
 </html>
