@@ -87,10 +87,7 @@
     border-color: var(--accent);
     box-shadow: 0 2px 20px rgba(26,74,46,0.12);
   }
-  .search-box svg {
-    flex-shrink: 0;
-    color: var(--muted);
-  }
+  .search-box svg { flex-shrink: 0; color: var(--muted); }
   .search-box input {
     flex: 1;
     border: none;
@@ -145,13 +142,19 @@
     gap: 10px;
   }
 
+  /* ── CHAPTER HEADER ── */
   .chapter-header {
     background: var(--accent);
     color: white;
     border-radius: 10px;
     padding: 14px 18px;
     margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
   }
+  .ch-header-left { flex: 1; min-width: 0; }
   .chapter-header .ch-num {
     font-size: 11px;
     color: rgba(255,255,255,0.6);
@@ -164,7 +167,27 @@
     font-size: 16px;
     margin-top: 3px;
   }
+  .ch-read-btn {
+    background: rgba(200,150,62,0.2);
+    border: 1.5px solid rgba(200,150,62,0.5);
+    color: #e8c87a;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .ch-read-btn:hover {
+    background: rgba(200,150,62,0.4);
+    border-color: var(--gold);
+    color: white;
+  }
 
+  /* ── ARTICLE CARD ── */
   .article-card {
     background: var(--card);
     border: 1.5px solid var(--border);
@@ -178,9 +201,6 @@
     border-color: var(--accent);
     box-shadow: 0 3px 14px rgba(26,74,46,0.1);
     transform: translateY(-1px);
-  }
-  .article-card.expanded {
-    border-color: var(--gold);
   }
   .article-top {
     display: flex;
@@ -206,25 +226,15 @@
     flex: 1;
     font-weight: 500;
   }
-  .art-toggle {
-    font-size: 11px;
+  .art-open-hint {
+    font-size: 16px;
     color: var(--muted);
     margin-left: auto;
     flex-shrink: 0;
-    margin-top: 2px;
-    transition: transform 0.2s;
+    margin-top: 1px;
+    transition: color 0.15s, transform 0.15s;
   }
-  .article-card.expanded .art-toggle { transform: rotate(180deg); }
-  .art-full {
-    display: none;
-    margin-top: 14px;
-    padding-top: 14px;
-    border-top: 1px solid var(--border);
-    font-size: 13px;
-    color: #3a3a3a;
-    line-height: 1.75;
-  }
-  .article-card.expanded .art-full { display: block; }
+  .article-card:hover .art-open-hint { color: var(--accent); transform: translateX(2px); }
 
   mark {
     background: var(--highlight);
@@ -241,7 +251,238 @@
   .no-results .icon { font-size: 40px; margin-bottom: 12px; }
   .no-results p { font-size: 15px; }
 
-  @media (max-width: 480px) {
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,28,18,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: var(--card);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 640px;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow: hidden;
+  }
+  .modal-header {
+    background: var(--accent);
+    color: white;
+    padding: 16px 20px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .modal-header-text { flex: 1; min-width: 0; }
+  .modal-chapter-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .modal-art-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    margin-top: 2px;
+  }
+  .modal-close {
+    background: rgba(255,255,255,0.12);
+    border: none;
+    color: white;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .modal-close:hover { background: rgba(255,255,255,0.25); }
+  .modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .modal-summary {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.55;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-full {
+    font-size: 14px;
+    color: #3a3a3a;
+    line-height: 1.85;
+    margin-bottom: 16px;
+  }
+  .modal-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .modal-tag {
+    background: rgba(26,74,46,0.08);
+    color: var(--accent);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .modal-footer {
+    padding: 12px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg);
+  }
+  .modal-nav-btn {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    cursor: pointer;
+    color: var(--text);
+    font-weight: 500;
+    transition: all 0.15s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .modal-nav-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .modal-nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .modal-counter { flex: 1; text-align: center; font-size: 12px; color: var(--muted); }
+
+  /* ── CHAPTER READER ── */
+  .reader-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 110;
+    flex-direction: column;
+  }
+  .reader-overlay.open { display: flex; }
+  .reader-topbar {
+    background: var(--accent);
+    color: white;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+  .reader-topbar-text { flex: 1; min-width: 0; }
+  .reader-ch-num {
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 500;
+  }
+  .reader-ch-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .reader-close-btn {
+    background: rgba(255,255,255,0.12);
+    border: none;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .reader-close-btn:hover { background: rgba(255,255,255,0.25); }
+  .reader-layout {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+  .reader-toc {
+    width: 180px;
+    flex-shrink: 0;
+    background: var(--card);
+    border-right: 1.5px solid var(--border);
+    overflow-y: auto;
+    padding: 12px 0;
+  }
+  .reader-toc-item {
+    display: block;
+    padding: 8px 16px;
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.15s, background 0.15s;
+    border-left: 2.5px solid transparent;
+    cursor: pointer;
+  }
+  .reader-toc-item:hover {
+    color: var(--accent);
+    background: rgba(26,74,46,0.05);
+    border-left-color: var(--accent);
+  }
+  .reader-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 28px;
+    max-width: 740px;
+  }
+  .reader-article {
+    margin-bottom: 36px;
+    scroll-margin-top: 20px;
+  }
+  .reader-art-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--accent);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .reader-art-summary {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.55;
+    margin-bottom: 10px;
+  }
+  .reader-art-full {
+    font-size: 14px;
+    color: #3a3a3a;
+    line-height: 1.85;
+    margin-bottom: 10px;
+    padding: 14px 16px;
+    background: rgba(26,74,46,0.04);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+  }
+  .reader-art-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .reader-article + .reader-article { padding-top: 28px; border-top: 1px solid var(--border); }
+
+  @media (max-width: 540px) {
+    .reader-toc { display: none; }
+    .reader-body { padding: 16px; }
+    .modal-box { max-height: 92vh; }
+    .ch-read-btn span { display: none; }
     header h1 { font-size: 22px; }
     .art-summary { font-size: 13px; }
   }
@@ -275,6 +516,46 @@
 
 <div class="stats" id="stats"></div>
 <div class="results" id="results"></div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-header-text">
+        <div class="modal-chapter-label" id="modal-chapter"></div>
+        <div class="modal-art-num" id="modal-art-num"></div>
+      </div>
+      <button class="modal-close" id="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-summary" id="modal-art-summary"></div>
+      <div class="modal-full" id="modal-art-full"></div>
+      <div class="modal-tags" id="modal-tags"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-nav-btn" id="modal-prev">← Пред.</button>
+      <span class="modal-counter" id="modal-counter"></span>
+      <button class="modal-nav-btn" id="modal-next">След. →</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHAPTER READER -->
+<div class="reader-overlay" id="reader">
+  <div class="reader-topbar">
+    <div class="reader-topbar-text">
+      <div class="reader-ch-num" id="reader-chapter-num"></div>
+      <div class="reader-ch-title" id="reader-chapter-title"></div>
+    </div>
+    <button class="reader-close-btn" id="reader-close">✕ Закрыть</button>
+  </div>
+  <div class="reader-layout">
+    <nav class="reader-toc" id="reader-toc"></nav>
+    <div class="reader-body" id="reader-body">
+      <div id="reader-articles"></div>
+    </div>
+  </div>
+</div>
 
 <script>
 const data = [
@@ -379,8 +660,6 @@ const data = [
   { type:'article', num:74, chapter:'XIII', summary:'Политические партии участвуют в формировании власти и публично отчитываются о финансировании.', full:'Политические партии выражают политическую волю различных социальных слоёв и участвуют в формировании государственной власти. Партии представляют публичные отчёты об источниках финансирования деятельности.', tags:['партии','власть','финансирование'] },
   { type:'article', num:75, chapter:'XIII', summary:'Религиозные организации отделены от государства и равны перед законом.', full:'Религиозные организации отделены от государства и равны перед законом. Государство не вмешивается в деятельность религиозных организаций и гарантирует свободу их деятельности.', tags:['религия','организации','государство'] },
 
-  // ── НОВЫЕ ГЛАВЫ ──────────────────────────────────────────────────────────
-
   { type:'chapter', num:'XIV', title:'Семья, дети и молодёжь', section:'Общество и личность' },
   { type:'article', num:76, chapter:'XIV', summary:'Семья — основная ячейка общества; брак основан на традиционных ценностях и свободном согласии.', full:'Семья является основной ячейкой общества и находится под охраной общества и государства. Брак основывается на традиционных семейных ценностях народа Узбекистана, свободном согласии и равноправии вступающих в брак. Государство создаёт социальные, экономические и правовые условия для полноценного развития семьи.', tags:['семья','брак','дети'] },
   { type:'article', num:77, chapter:'XIV', summary:'Родители обязаны содержать и воспитывать детей; государство заботится о сиротах.', full:'Родители и заменяющие их лица обязаны содержать своих детей до совершеннолетия, заботиться об их воспитании, образовании и гармоничном развитии. Государство и общество обеспечивают воспитание детей-сирот и детей без родительской опеки, поощряют благотворительность.', tags:['семья','дети','сироты','воспитание'] },
@@ -412,6 +691,34 @@ const data = [
   { type:'article', num:93, chapter:'XVIII', summary:'Совместные полномочия обеих палат: принятие законов, бюджета, ратификация договоров, объявление войны и др.', full:'К совместному ведению палат относятся: принятие Конституции и законов, их изменение; ратификация и денонсация международных договоров; проведение референдума; определение основных направлений внутренней и внешней политики; принятие Государственного бюджета; установление налогов; образование Центральной избирательной комиссии; утверждение указов об объявлении войны, мобилизации, чрезвычайного положения; проведение парламентского расследования и иные полномочия по Конституции.', tags:['Олий Мажлис','полномочия','бюджет','законы','война','мобилизация','налоги','референдум'] },
   { type:'article', num:94, chapter:'XVIII', summary:'Исключительные полномочия Законодательной палаты: контроль бюджета, одобрение Премьер-министра и членов Кабинета.', full:'К исключительным полномочиям Законодательной палаты относятся: контроль за исполнением Государственного бюджета; рассмотрение отчёта Счётной палаты; одобрение кандидатуры Премьер-министра; одобрение кандидатур членов Кабинета Министров; заслушивание докладов Кабинета Министров; направление парламентского запроса; избрание Спикера и председателей комитетов; лишение депутата неприкосновенности. Законодательная палата может самораспуститься большинством не менее двух третей голосов.', tags:['Законодательная палата','полномочия','Премьер-министр','Кабинет Министров','бюджет','Спикер'] },
   { type:'article', num:95, chapter:'XVIII', summary:'Исключительные полномочия Сената: избрание судов, назначение Генпрокурора, амнистия, дипломатические назначения.', full:'К исключительным полномочиям Сената относятся: избрание Конституционного суда, Верховного суда, Высшего судейского совета; одобрение кандидатуры Генерального прокурора и председателя Счётной палаты; назначение руководителей дипломатических представительств; назначение председателя Центрального банка; принятие актов об амнистии; заслушивание отчётов Генпрокурора и руководителей дипломатических представительств; поддержка местных представительных органов. Сенат может самораспуститься большинством не менее двух третей голосов.', tags:['Сенат','полномочия','суд','Генпрокурор','амнистия','дипломатия','Центральный банк'] },
+  { type:'article', num:96, chapter:'XVIII', summary:'Порядок заседаний палат: сроки созыва, периодичность, кворум, совместные заседания.', full:'По истечении срока полномочий палаты продолжают работу до начала работы нового созыва. Первые заседания созываются ЦИК: Законодательной палаты — не позднее двух месяцев после выборов, Сената — не позднее месяца после формирования. Сессии Законодательной палаты — с первого рабочего дня сентября по последний рабочий день июня. Сенат заседает не реже трёх раз в год. Кворум — более половины от общего числа депутатов/сенаторов; для конституционных законов — не менее двух третей. Палаты заседают раздельно; совместные заседания — при принесении присяги Президентом, при его важнейших выступлениях и выступлениях руководителей иностранных государств.', tags:['Олий Мажлис','заседания','кворум','сессия','совместное заседание','Сенат','Законодательная палата'] },
+  { type:'article', num:97, chapter:'XVIII', summary:'Палаты принимают постановления большинством голосов от общего числа депутатов/сенаторов.', full:'Законодательная палата и Сенат по вопросам, отнесённым к их ведению, принимают постановления. Постановления принимаются большинством голосов от общего числа депутатов Законодательной палаты или членов Сената, за исключением случаев, предусмотренных Конституцией.', tags:['Олий Мажлис','постановления','голосование','Сенат','Законодательная палата'] },
+  { type:'article', num:98, chapter:'XVIII', summary:'Право законодательной инициативы: Президент, депутаты, Кабмин, суды, Генпрокурор, Сенат, граждане (100 000).', full:'Право законодательной инициативы принадлежит Президенту, Республике Каракалпакстан, депутатам Законодательной палаты, Кабинету Министров, а также Конституционному суду, Верховному суду и Генеральному прокурору по вопросам их ведения. Законопроекты вносятся в Законодательную палату. Граждане (не менее 100 000), Сенат, Уполномоченный по правам человека (омбудсман) и ЦИК вправе вносить законодательные предложения в Законодательную палату.', tags:['законодательная инициатива','Президент','Сенат','граждане','омбудсман','законопроект'] },
+  { type:'article', num:99, chapter:'XVIII', summary:'Порядок принятия закона: Законодательная палата → Сенат → Президент; процедура при отклонении.', full:'Закон приобретает силу после принятия Законодательной палатой, одобрения Сенатом, подписания Президентом и публикации. Принятый закон направляется в Сенат в течение 10 дней. Сенат рассматривает его 60 дней; при одобрении — направляет Президенту. Если Сенат не принял решения — Законодательная палата направляет закон Президенту напрямую. Президент подписывает в течение 60 дней. Отклонённый Сенатом закон возвращается в Законодательную палату; при повторном одобрении двумя третями депутатов — считается принятым. Возможно создание согласительной комиссии. Президент вправе вернуть закон с возражениями; при повторном одобрении двумя третями обеих палат — Президент обязан подписать в течение 14 дней. Публикация законов обязательна.', tags:['закон','законодательный процесс','Президент','Сенат','Законодательная палата','подписание','вето','согласительная комиссия'] },
+  { type:'article', num:100, chapter:'XVIII', summary:'Спикер Законодательной палаты: избрание, полномочия, не более двух сроков подряд.', full:'Законодательная палата избирает из своего состава Спикера и его заместителей тайным голосованием большинством голосов на срок полномочий палаты. Одно лицо не может быть Спикером более двух сроков подряд. Досрочный отзыв — более двумя третями голосов. Спикер: созывает и ведёт заседания; руководит подготовкой вопросов; координирует комитеты; организует контроль за исполнением законов; руководит межпарламентскими связями; представляет Законодательную палату; подписывает постановления; издаёт распоряжения.', tags:['Спикер','Законодательная палата','полномочия','выборы','отзыв'] },
+  { type:'article', num:101, chapter:'XVIII', summary:'Председатель Сената: избирается по представлению Президента, не более двух сроков подряд.', full:'Сенат избирает Председателя и заместителей тайным голосованием большинством голосов; Председатель — по представлению Президента. Один из заместителей — представитель Каракалпакстана. Одно лицо не может быть Председателем более двух сроков подряд. Досрочный отзыв — более двумя третями голосов. Председатель Сената: созывает и ведёт заседания; руководит подготовкой вопросов; координирует комитеты; контролирует исполнение законов; руководит межпарламентскими связями; представляет Сенат; подписывает постановления; издаёт распоряжения.', tags:['Председатель Сената','Сенат','Президент','Каракалпакстан','выборы','отзыв'] },
+  { type:'article', num:102, chapter:'XVIII', summary:'Палаты избирают комитеты для законопроектной работы и контроля; могут создавать комиссии.', full:'Законодательная палата избирает на срок своих полномочий комитеты для законопроектной работы, предварительного рассмотрения вопросов и контроля за исполнением законов. Сенат избирает комитеты для предварительного рассмотрения вопросов и контроля. При необходимости обе палаты могут создавать временные комиссии из своих членов.', tags:['комитеты','комиссии','Законодательная палата','Сенат','контроль'] },
+  { type:'article', num:103, chapter:'XVIII', summary:'Парламентское расследование — совместным решением палат; создаётся специальная паритетная комиссия.', full:'В целях изучения фактов, создающих угрозу правам и свободам граждан, интересам общества и государства, совместным решением Законодательной палаты и Сената может проводиться парламентское расследование. Для его проведения на паритетных началах создаётся специальная комиссия из депутатов обеих палат.', tags:['парламентское расследование','комиссия','права','безопасность'] },
+  { type:'article', num:104, chapter:'XVIII', summary:'Депутатам и сенаторам возмещаются расходы; постоянные — не вправе вести иную оплачиваемую деятельность. Неприкосновенность.', full:'Депутатам Законодательной палаты и членам Сената возмещаются расходы, связанные с их деятельностью. Работающие на постоянной основе не вправе заниматься иной оплачиваемой деятельностью, кроме научной, творческой и педагогической. Депутат и сенатор пользуются неприкосновенностью: они не могут быть привлечены к уголовной ответственности, задержаны, заключены под стражу или подвергнуты административному взысканию в судебном порядке без согласия соответствующей палаты.', tags:['депутат','сенатор','неприкосновенность','расходы','иммунитет'] },
+
+  { type:'chapter', num:'XIX', title:'Президент Республики Узбекистан', section:'Организация государственной власти' },
+  { type:'article', num:105, chapter:'XIX', summary:'Президент — глава государства, обеспечивает согласованное функционирование органов власти.', full:'Президент Республики Узбекистан является главой государства и обеспечивает согласованное функционирование и взаимодействие органов государственной власти.', tags:['Президент','глава государства','государственная власть'] },
+  { type:'article', num:106, chapter:'XIX', summary:'Требования к кандидату в Президенты: гражданин, не моложе 35 лет, 10 лет проживания. Срок — 7 лет, не более двух сроков подряд.', full:'Президентом может быть избран гражданин Узбекистана не моложе 35 лет, свободно владеющий государственным языком, постоянно проживающий на территории Узбекистана не менее 10 лет непосредственно перед выборами. Одно и то же лицо не может быть Президентом более двух сроков подряд. Президент избирается на основе всеобщего, равного и прямого избирательного права при тайном голосовании сроком на семь лет.', tags:['Президент','выборы','требования','срок полномочий','гражданство'] },
+  { type:'article', num:107, chapter:'XIX', summary:'Президент не вправе занимать иную должность или вести предпринимательскую деятельность; его личность неприкосновенна.', full:'Президент на период исполнения своих обязанностей не может занимать иную оплачиваемую должность, быть депутатом представительного органа, заниматься предпринимательской деятельностью. Личность Президента неприкосновенна и охраняется законом.', tags:['Президент','неприкосновенность','запреты','предпринимательство'] },
+  { type:'article', num:108, chapter:'XIX', summary:'Президент вступает в должность с момента принесения присяги на заседании Олий Мажлиса.', full:'Президент считается вступившим в должность с момента принесения на заседании Олий Мажлиса присяги: «Торжественно клянусь верно служить народу Узбекистана, строго следовать Конституции и законам республики, гарантировать права и свободы граждан, добросовестно выполнять возложенные на Президента Республики Узбекистан обязанности».', tags:['Президент','присяга','вступление в должность'] },
+  { type:'article', num:109, chapter:'XIX', summary:'25 полномочий Президента: гарант Конституции, дипломатия, назначения, оборона, чрезвычайное положение и др.', full:'Президент: является гарантом прав и свобод граждан, Конституции и законов, суверенитета и территориальной целостности; представляет Узбекистан внутри страны и в международных отношениях; ведёт переговоры и подписывает договоры; принимает дипломатические верительные грамоты; назначает дипломатических представителей (с одобрения Сената); обращается к народу и Олий Мажлису; образует и упраздняет министерства; представляет кандидатуру Председателя Сената; назначает Премьер-министра и членов Кабинета (с одобрения Законодательной палаты); назначает руководителей госорганов; назначает Генпрокурора и председателя Счётной палаты (с одобрения Сената); назначает председателя СГБ (после консультаций с Сенатом); представляет кандидатуры в Конституционный суд, Верховный суд и другие органы; назначает и освобождает председателей областных судов; назначает и освобождает хокимов; приостанавливает и отменяет акты исполнительной власти; подписывает и обнародует законы; объявляет войну и мобилизацию; вводит чрезвычайное положение; является Верховным главнокомандующим; награждает и присваивает звания; решает вопросы гражданства и политического убежища; осуществляет помилование; образует Совет безопасности и Администрацию Президента.', tags:['Президент','полномочия','назначения','дипломатия','оборона','чрезвычайное положение','помилование','гражданство','суды'] },
+  { type:'article', num:110, chapter:'XIX', summary:'Президент издаёт указы, постановления и распоряжения, обязательные на всей территории республики.', full:'Президент на основе и во исполнение Конституции и законов Республики Узбекистан издаёт указы, постановления и распоряжения, имеющие обязательную силу на всей территории республики.', tags:['Президент','указы','постановления','распоряжения','нормативные акты'] },
+  { type:'article', num:111, chapter:'XIX', summary:'Президент вправе распустить палаты Олий Мажлиса по согласованию с Конституционным судом; новые выборы — в течение трёх месяцев.', full:'Законодательная палата и Сенат могут быть распущены решением Президента по согласованию с Конституционным судом в случае непреодолимых разногласий в их составе или неоднократного принятия неконституционных решений. Новые выборы проводятся в течение трёх месяцев. Роспуск невозможен в период чрезвычайного положения.', tags:['Президент','роспуск','Олий Мажлис','Конституционный суд','чрезвычайное положение','выборы'] },
+  { type:'article', num:112, chapter:'XIX', summary:'При невозможности исполнения обязанностей Президента его полномочия временно возлагаются на Председателя Сената; выборы — в течение трёх месяцев.', full:'При невозможности исполнения Президентом своих обязанностей его обязанности и полномочия временно возлагаются на Председателя Сената Олий Мажлиса, с проведением в течение трёх месяцев выборов Президента.', tags:['Президент','исполнение обязанностей','Председатель Сената','временно'] },
+  { type:'article', num:113, chapter:'XIX', summary:'Президент, ушедший в отставку по истечении полномочий, пожизненно становится членом Сената.', full:'Президент Республики Узбекистан, ушедший в отставку по истечении своих полномочий, занимает пожизненно должность члена Сената Олий Мажлиса Республики Узбекистан.', tags:['Президент','отставка','Сенат','пожизненно'] },
+
+  { type:'chapter', num:'XX', title:'Кабинет Министров Республики Узбекистан', section:'Организация государственной власти' },
+  { type:'article', num:114, chapter:'XX', summary:'Кабинет Министров осуществляет исполнительную власть; состоит из Премьер-министра, его заместителей и министров.', full:'Исполнительную власть осуществляет Кабинет Министров Республики Узбекистан. Кабинет Министров состоит из Премьер-министра, его заместителей и министров; по должности в его состав входит глава правительства Республики Каракалпакстан. Кабинет Министров осуществляет свою деятельность в рамках основных направлений деятельности исполнительной власти, определяемых Президентом.', tags:['Кабинет Министров','исполнительная власть','Премьер-министр','Каракалпакстан'] },
+  { type:'article', num:115, chapter:'XX', summary:'12 полномочий Кабмина: экономика, социальная политика, бюджет, экология, молодёжь, гражданское общество, права граждан и др.', full:'Кабинет Министров: несёт ответственность за экономическую, социальную, налоговую и бюджетную политику, развитие науки, культуры, образования и здравоохранения; обеспечивает устойчивый экономический рост, макроэкономическую стабильность, сокращение бедности, продовольственную безопасность и инвестиционный климат; обеспечивает систему социальной защиты, в том числе лиц с инвалидностью; реализует политику в области охраны окружающей среды, борьбы с изменением климата и пандемиями; реализует государственную молодёжную политику, поддерживает семью и традиционные ценности; поддерживает институты гражданского общества; защищает права и законные интересы граждан; обеспечивает исполнение Конституции, законов и актов Президента; координирует органы исполнительной власти; обеспечивает открытость и противодействие коррупции; представляет Законодательной палате ежегодные доклады по социально-экономическим вопросам.', tags:['Кабинет Министров','полномочия','экономика','социальная политика','экология','гражданское общество','коррупция'] },
+  { type:'article', num:116, chapter:'XX', summary:'Кабмин издаёт постановления и распоряжения; ответственен перед Олий Мажлисом и Президентом.', full:'Кабинет Министров в пределах Конституции и законодательства издаёт постановления и распоряжения, обязательные для исполнения на всей территории республики. Кабинет Министров ответственен перед Олий Мажлисом и Президентом. Действующий Кабинет Министров слагает полномочия перед вновь избранным Олий Мажлисом, но продолжает работу до формирования нового состава.', tags:['Кабинет Министров','постановления','ответственность','Олий Мажлис','Президент'] },
+  { type:'article', num:117, chapter:'XX', summary:'Премьер-министр организует и руководит деятельностью Кабмина, несёт персональную ответственность за его работу.', full:'Премьер-министр: организует и руководит деятельностью Кабинета Министров, несёт персональную ответственность за эффективность его работы; председательствует на заседаниях и подписывает решения Кабмина; представляет Кабинет Министров в международных отношениях; выполняет иные функции, предусмотренные законодательством.', tags:['Премьер-министр','Кабинет Министров','руководство','ответственность','международные отношения'] },
+  { type:'article', num:118, chapter:'XX', summary:'Порядок назначения Премьер-министра: консультации с фракциями, одобрение Законодательной палатой, процедура при трёхкратном отклонении.', full:'Кандидатура Премьер-министра представляется Президентом после консультаций со всеми фракциями в течение месяца после формирования палат или освобождения должности. Законодательная палата рассматривает кандидатуру в течение 10 дней; кандидат представляет программу действий Кабмина. Одобрение — более половиной голосов от общего числа депутатов. При трёхкратном отклонении Президент назначает Премьер-министра и вправе распустить Законодательную палату. Члены Кабмина назначаются Президентом после одобрения Законодательной палатой. Президент вправе отправить Премьер-министра или членов Кабмина в отставку. Законодательная палата вправе заслушивать отчёты членов Кабмина и вносить Президенту предложения об их отставке. Члены Кабмина обязаны отвечать на парламентские запросы.', tags:['Премьер-министр','назначение','Законодательная палата','Президент','консультации','отставка','запрос'] },
+  { type:'article', num:119, chapter:'XX', summary:'Вотум недоверия Премьер-министру: инициатива одной трети депутатов, принятие двумя третями; весь Кабмин уходит в отставку.', full:'При устойчивых противоречиях между Премьер-министром и Законодательной палатой по предложению не менее одной трети депутатов вопрос о вотуме недоверия вносится на обсуждение Законодательной палаты. Вотум недоверия считается принятым, если за него проголосует не менее двух третей от общего числа депутатов. В этом случае Президент освобождает Премьер-министра от должности, а весь состав Кабинета Министров уходит в отставку.', tags:['вотум недоверия','Премьер-министр','Законодательная палата','отставка','Кабинет Министров'] },
 ];
 
 const filterTags = {
@@ -421,8 +728,76 @@ const filterTags = {
 };
 
 let activeFilter = 'all';
-let expandedCards = new Set();
 
+document.addEventListener('DOMContentLoaded', () => {
+
+// ── MODAL ────────────────────────────────────────────────────────────────────
+let modalArticles = [];
+let modalIndex = 0;
+
+function openModal(artNum, contextArticles) {
+  modalArticles = contextArticles;
+  modalIndex = contextArticles.findIndex(a => a.num === artNum);
+  renderModal();
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function renderModal() {
+  const art = modalArticles[modalIndex];
+  const ch = data.find(d => d.type === 'chapter' && d.num === art.chapter);
+  document.getElementById('modal-chapter').textContent = ch ? `Глава ${ch.num} · ${ch.title}` : '';
+  document.getElementById('modal-art-num').textContent = `Статья ${art.num}`;
+  document.getElementById('modal-art-summary').textContent = art.summary;
+  document.getElementById('modal-art-full').textContent = art.full;
+  document.getElementById('modal-tags').innerHTML = (art.tags || []).map(t =>
+    `<span class="modal-tag">${t}</span>`).join('');
+  document.getElementById('modal-counter').textContent = `${modalIndex + 1} / ${modalArticles.length}`;
+  document.getElementById('modal-prev').disabled = modalIndex === 0;
+  document.getElementById('modal-next').disabled = modalIndex === modalArticles.length - 1;
+}
+
+// ── CHAPTER READER ──────────────────────────────────────────────────────────
+function openChapterReader(chNum) {
+  const ch = data.find(d => d.type === 'chapter' && d.num === chNum);
+  const articles = data.filter(d => d.type === 'article' && d.chapter === chNum);
+  if (!ch || !articles.length) return;
+
+  document.getElementById('reader-chapter-title').textContent = ch.title;
+  document.getElementById('reader-chapter-num').textContent = `Глава ${ch.num} · ${ch.section || ''}`;
+  document.getElementById('reader-toc').innerHTML = articles.map(a =>
+    `<div class="reader-toc-item" onclick="scrollToReaderArticle(${a.num})">Ст. ${a.num}</div>`
+  ).join('');
+  document.getElementById('reader-articles').innerHTML = articles.map(a => `
+    <div class="reader-article" id="reader-art-${a.num}">
+      <div class="reader-art-num">Статья ${a.num}</div>
+      <div class="reader-art-summary">${a.summary}</div>
+      <div class="reader-art-full">${a.full}</div>
+      <div class="reader-art-tags">${(a.tags || []).map(t => `<span class="modal-tag">${t}</span>`).join('')}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('reader').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('reader-body').scrollTop = 0;
+}
+
+window.scrollToReaderArticle = function(num) {
+  const el = document.getElementById(`reader-art-${num}`);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
+function closeReader() {
+  document.getElementById('reader').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ── SEARCH & RENDER ──────────────────────────────────────────────────────────
 function highlight(text, query) {
   if (!query) return text;
   const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -431,7 +806,6 @@ function highlight(text, query) {
 
 function matches(item, query, filter) {
   const q = query.toLowerCase().trim();
-
   if (filter === 'chapter' && item.type !== 'chapter') return false;
   if (filter === 'article' && item.type !== 'article') return false;
   if (filter === 'rights' && item.type === 'article') {
@@ -444,35 +818,27 @@ function matches(item, query, filter) {
     if (!item.tags.some(t => filterTags.duties.some(f => t.includes(f)))) return false;
   }
   if (['rights','economy','duties'].includes(filter) && item.type === 'chapter') return false;
-
   if (!q) return true;
 
   const numMatch = q.match(/^(?:ст(?:атья)?\.?\s*)?(\d+)$/i);
   const chapterMatch = q.match(/^(?:глава\s+)?([ivxlcdm]+|\d+)$/i);
-
-  if (numMatch && item.type === 'article') {
-    return item.num === parseInt(numMatch[1]);
-  }
+  if (numMatch && item.type === 'article') return item.num === parseInt(numMatch[1]);
   if (chapterMatch && item.type === 'chapter') {
     const cn = chapterMatch[1].toUpperCase();
     return item.num === cn || romanToArab(item.num) === parseInt(cn);
   }
-
   const searchable = [
-    item.title || '',
-    item.summary || '',
-    item.full || '',
+    item.title || '', item.summary || '', item.full || '',
     (item.tags || []).join(' '),
     item.type === 'article' ? `статья ${item.num}` : `глава ${item.num}`,
   ].join(' ').toLowerCase();
-
   return searchable.includes(q);
 }
 
 function romanToArab(r) {
   const map = {I:1,V:5,X:10,L:50,C:100,D:500,M:1000};
   let n = 0;
-  for (let i=0; i<r.length; i++) {
+  for (let i = 0; i < r.length; i++) {
     const cur = map[r[i]], next = map[r[i+1]];
     n += next && cur < next ? -cur : cur;
   }
@@ -480,20 +846,20 @@ function romanToArab(r) {
 }
 
 function render(query) {
-  const results = document.getElementById('results');
-  const stats = document.getElementById('stats');
+  const resultsEl = document.getElementById('results');
+  const statsEl = document.getElementById('stats');
   const q = query.toLowerCase().trim();
-
   const filtered = data.filter(item => matches(item, query, activeFilter));
   const articleCount = filtered.filter(i => i.type === 'article').length;
 
   if (filtered.length === 0) {
-    results.innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>Ничего не найдено по запросу «${query}»</p></div>`;
-    stats.textContent = '';
+    resultsEl.innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>Ничего не найдено по запросу «${query}»</p></div>`;
+    statsEl.textContent = '';
     return;
   }
 
-  stats.textContent = articleCount > 0 ? `Найдено статей: ${articleCount}` : '';
+  statsEl.textContent = articleCount > 0 ? `Найдено статей: ${articleCount}` : '';
+  const visibleArticles = filtered.filter(i => i.type === 'article');
 
   let html = '';
   const articles = filtered.filter(i => i.type === 'article');
@@ -501,10 +867,8 @@ function render(query) {
 
   if (activeFilter === 'chapter') {
     chapters.forEach(ch => {
-      html += `<div class="chapter-header">
-        <div class="ch-num">Глава ${ch.num}</div>
-        <div class="ch-title">${highlight(ch.title, q)}</div>
-      </div>`;
+      const artCount = data.filter(d => d.type === 'article' && d.chapter === ch.num).length;
+      html += renderChapterHeader(ch, q, artCount);
     });
   } else if (activeFilter === 'article') {
     articles.forEach(art => { html += renderArticle(art, q); });
@@ -513,60 +877,62 @@ function render(query) {
     filtered.forEach(item => {
       if (item.type === 'chapter') {
         processedChapters.add(item.num);
-        html += `<div class="chapter-header">
-          <div class="ch-num">Глава ${item.num}</div>
-          <div class="ch-title">${highlight(item.title, q)}</div>
-        </div>`;
+        const artCount = data.filter(d => d.type === 'article' && d.chapter === item.num).length;
+        html += renderChapterHeader(item, q, artCount);
         if (q) {
-          articles.filter(a => a.chapter === item.num).forEach(art => {
-            html += renderArticle(art, q);
-          });
+          articles.filter(a => a.chapter === item.num).forEach(art => { html += renderArticle(art, q); });
         }
       } else if (item.type === 'article') {
         const ch = data.find(d => d.type === 'chapter' && d.num === item.chapter);
         if (ch && !processedChapters.has(ch.num) && !filtered.find(f => f.type === 'chapter' && f.num === ch.num)) {
           processedChapters.add(ch.num);
-          html += `<div class="chapter-header">
-            <div class="ch-num">Глава ${ch.num}</div>
-            <div class="ch-title">${ch.title}</div>
-          </div>`;
+          const artCount = data.filter(d => d.type === 'article' && d.chapter === ch.num).length;
+          html += renderChapterHeader(ch, '', artCount);
         }
         html += renderArticle(item, q);
       }
     });
   }
 
-  results.innerHTML = html;
+  resultsEl.innerHTML = html;
 
-  results.querySelectorAll('.article-card').forEach(card => {
+  resultsEl.querySelectorAll('.article-card').forEach(card => {
     card.addEventListener('click', () => {
-      const id = card.dataset.id;
-      if (expandedCards.has(id)) {
-        expandedCards.delete(id);
-        card.classList.remove('expanded');
-      } else {
-        expandedCards.add(id);
-        card.classList.add('expanded');
-      }
+      const num = parseInt(card.dataset.num);
+      const ctx = visibleArticles.length > 0 ? visibleArticles : data.filter(d => d.type === 'article');
+      openModal(num, ctx);
     });
-    if (expandedCards.has(card.dataset.id)) {
-      card.classList.add('expanded');
-    }
+  });
+
+  resultsEl.querySelectorAll('.ch-read-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      openChapterReader(btn.dataset.ch);
+    });
   });
 }
 
-function renderArticle(art, q) {
-  const id = `art-${art.num}`;
-  return `<div class="article-card" data-id="${id}">
-    <div class="article-top">
-      <span class="art-num">Ст. ${art.num}</span>
-      <span class="art-summary">${highlight(art.summary, q)}</span>
-      <span class="art-toggle">▼</span>
+function renderChapterHeader(ch, q, artCount) {
+  return `<div class="chapter-header">
+    <div class="ch-header-left">
+      <div class="ch-num">Глава ${ch.num} · ${artCount} ст.</div>
+      <div class="ch-title">${highlight(ch.title, q)}</div>
     </div>
-    <div class="art-full">${highlight(art.full, q)}</div>
+    <button class="ch-read-btn" data-ch="${ch.num}">📖 Читать</button>
   </div>`;
 }
 
+function renderArticle(art, q) {
+  return `<div class="article-card" data-num="${art.num}">
+    <div class="article-top">
+      <span class="art-num">Ст. ${art.num}</span>
+      <span class="art-summary">${highlight(art.summary, q)}</span>
+      <span class="art-open-hint">→</span>
+    </div>
+  </div>`;
+}
+
+// ── EVENT LISTENERS ──────────────────────────────────────────────────────────
 const input = document.getElementById('searchInput');
 const clearBtn = document.getElementById('clearBtn');
 
@@ -574,14 +940,12 @@ input.addEventListener('input', () => {
   clearBtn.style.display = input.value ? 'block' : 'none';
   render(input.value);
 });
-
 clearBtn.addEventListener('click', () => {
   input.value = '';
   clearBtn.style.display = 'none';
   render('');
   input.focus();
 });
-
 document.querySelectorAll('.filter-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -591,7 +955,37 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
   });
 });
 
+// Modal controls
+document.getElementById('modal-prev').addEventListener('click', () => {
+  if (modalIndex > 0) { modalIndex--; renderModal(); }
+});
+document.getElementById('modal-next').addEventListener('click', () => {
+  if (modalIndex < modalArticles.length - 1) { modalIndex++; renderModal(); }
+});
+document.getElementById('modal-close').addEventListener('click', closeModal);
+document.getElementById('modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal')) closeModal();
+});
+
+// Reader controls
+document.getElementById('reader-close').addEventListener('click', closeReader);
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+  const modalOpen = document.getElementById('modal').classList.contains('open');
+  const readerOpen = document.getElementById('reader').classList.contains('open');
+  if (e.key === 'Escape') {
+    if (readerOpen) { closeReader(); return; }
+    if (modalOpen) { closeModal(); return; }
+  }
+  if (modalOpen) {
+    if (e.key === 'ArrowLeft' && modalIndex > 0) { modalIndex--; renderModal(); }
+    if (e.key === 'ArrowRight' && modalIndex < modalArticles.length - 1) { modalIndex++; renderModal(); }
+  }
+});
+
 render('');
+});
 </script>
 </body>
 </html>
